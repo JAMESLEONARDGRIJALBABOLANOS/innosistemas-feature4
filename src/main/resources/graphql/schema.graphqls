@@ -1,0 +1,23 @@
+type Query {
+    # Placeholder query - GraphQL requires at least one query
+    hello: String
+}
+
+type Mutation {
+    login(email: String!, password: String!): AuthResponse!
+}
+
+type AuthResponse {
+    token: String!
+    userInfo: UserInfo!
+}
+
+type UserInfo {
+    id: ID!
+    email: String!
+    role: UserRole!
+}
+
+enum UserRole {
+    STUDENT
+}

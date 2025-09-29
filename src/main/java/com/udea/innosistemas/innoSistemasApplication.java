@@ -102,3 +102,4 @@ public class InnoSistemasApplication {
             "  Timezone: " + System.getProperty("user.timezone") + "\n" +
             "============================================================\n");
     }
+}
