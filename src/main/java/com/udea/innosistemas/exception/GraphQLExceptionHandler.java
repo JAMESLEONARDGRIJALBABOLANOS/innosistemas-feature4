@@ -14,6 +14,12 @@ import org.springframework.validation.BindException;
 
 import jakarta.validation.ConstraintViolationException;
 
+//Clase para manejar excepciones específicas en las operaciones GraphQL.
+//Proporciona respuestas de error detalladas y adecuadas según el tipo de excepción.
+// Mejora la experiencia del cliente al proporcionar mensajes de error claros y específicos.
+// Autor: Fábrica-Escuela de Software UdeA  
+// Versión: 1.0.0
+
 @Component
 public class GraphQLExceptionHandler extends DataFetcherExceptionResolverAdapter {
 

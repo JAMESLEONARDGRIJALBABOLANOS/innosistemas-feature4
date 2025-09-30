@@ -39,7 +39,7 @@ spring:
     hibernate:
       ddl-auto: ${JPA_DDL_AUTO:validate}
       naming:
-        physical-strategy: org.hibernate.boot.model.naming.SnakeCasePhysicalNamingStrategy
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
         implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
     show-sql: ${JPA_SHOW_SQL:false}
     properties:
@@ -109,17 +109,22 @@ spring:
         max-idle: 8
         min-idle: 0
 
-# Configuración de GraphQL
-graphql:
-  servlet:
-    mapping: /graphql
-    enabled: true
-    corsEnabled: true
-  tools:
-    schema-location-pattern: "**/*.graphqls"
-  playground:
-    enabled: ${GRAPHQL_PLAYGROUND:false}
-    endpoint: /graphql
+  # Configuración de GraphQL
+  graphql:
+    graphiql:
+      enabled: ${GRAPHIQL_ENABLED:false}  # Deshabilitado por defecto (seguridad)
+      path: /graphiql
+    path: /graphql
+    schema:
+      printer:
+        enabled: ${GRAPHQL_SCHEMA_PRINTER:false}  # Deshabilitado por defecto
+      introspection:
+        enabled: ${GRAPHQL_INTROSPECTION:false}  # Deshabilitado por defecto
+    cors:
+      allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:8080}
+      allowed-methods: GET,POST,OPTIONS
+      allowed-headers: "*"
+      allow-credentials: true
 
 # Configuración de logging
 logging:
@@ -178,8 +183,8 @@ innosistemas:
   auth:
     jwt:
       secret: ${JWT_SECRET:CHANGE_THIS_SECRET_KEY_IN_PRODUCTION_USE_ENVIRONMENT_VARIABLE}
-      expiration: ${JWT_EXPIRATION:3600} # 1 hora en segundos (más seguro)
-      refresh-expiration: ${JWT_REFRESH_EXPIRATION:86400} # 1 día en segundos
+      expiration: ${JWT_EXPIRATION:86400} # 24 horas en segundos (según tasking)
+      refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800} # 7 días en segundos (según tasking)
     
   # Configuración de equipos
   teams:
@@ -218,18 +223,62 @@ innosistemas:
     allow-credentials: true
     max-age: 3600
 
+  # Configuración de Rate Limiting
+  ratelimit:
+    enabled: ${RATE_LIMIT_ENABLED:true}
+    # Configuración por defecto para endpoints normales
+    default:
+      capacity: ${RATE_LIMIT_CAPACITY:100} # Tokens iniciales
+      refill-tokens: ${RATE_LIMIT_REFILL:100} # Tokens a rellenar
+      refill-period-minutes: ${RATE_LIMIT_PERIOD:1} # Período de relleno en minutos
+    # Configuración para endpoints de autenticación (más estricta)
+    auth:
+      capacity: ${RATE_LIMIT_AUTH_CAPACITY:10}
+      refill-tokens: ${RATE_LIMIT_AUTH_REFILL:10}
+      refill-period-minutes: ${RATE_LIMIT_AUTH_PERIOD:1}
+
+  # Configuración de Headers de Seguridad
+  security:
+    headers:
+      csp: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' http://localhost:* ws://localhost:*"
+      hsts:
+        enabled: ${HSTS_ENABLED:true}
+        max-age: ${HSTS_MAX_AGE:31536000} # 1 año
+      frame-options: ${FRAME_OPTIONS:DENY}
+
 # Configuración específica por perfil
 ---
 spring:
   config:
     activate:
       on-profile: dev
+  datasource:
+    url: jdbc:h2:mem:devdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  flyway:
+    enabled: false
   cache:
     type: simple
+  # GraphQL - Habilitar GraphiQL y introspección solo en desarrollo
+  graphql:
+    graphiql:
+      enabled: true
+    schema:
+      printer:
+        enabled: true
+      introspection:
+        enabled: true
 
 logging:
   level:
@@ -240,7 +289,7 @@ logging:
 
 innosistemas:
   cors:
-    allowed-origins: http://localhost:3000,http://localhost:8080
+    allowed-origins: http://localhost:3000,http://localhost:8080,http://localhost:8080/api/v1
 
 ---
 spring:
@@ -251,7 +300,7 @@ spring:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
     username: sa
-    password: 
+    password:
   h2:
     console:
       enabled: true
@@ -260,6 +309,8 @@ spring:
       ddl-auto: create-drop
     show-sql: true
     database-platform: org.hibernate.dialect.H2Dialect
+  flyway:
+    enabled: false
 
 logging:
   level:

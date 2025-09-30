@@ -1,41 +1,42 @@
 package com.udea.innosistemas.config;
 
+import com.udea.innosistemas.security.RoleBasedAccessInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 /**
- * Configuración Web para la aplicación InnoSistemas
- * 
- * Esta configuración establece las políticas de CORS, interceptores,
- * configuración de contenido estático y otras configuraciones web
- * necesarias para el correcto funcionamiento del frontend NextJS
- * y la integración con la API GraphQL.
- * 
+ * Configuración consolidada de Web MVC para la aplicación InnoSistemas.
+ *
+ * Esta configuración establece:
+ * - Políticas de CORS
+ * - Interceptores de seguridad y roles
+ * - Configuración de contenido estático
+ * - Soporte para GraphQL y GraphiQL
+ *
  * @author Fábrica-Escuela de Software UdeA
- * @version 1.0.0
+ * @version 2.0.0
  */
 @Configuration
-@EnableWebMvc
-public class WebConfig implements WebMvcConfigurer {
+public class WebMvcConfig implements WebMvcConfigurer {
 
-    private static final Logger log = LoggerFactory.getLogger(WebConfig.class);
+    private static final Logger log = LoggerFactory.getLogger(WebMvcConfig.class);
+
+    @Autowired
+    private RoleBasedAccessInterceptor roleBasedAccessInterceptor;
 
     @Value("${innosistemas.cors.allowed-origins}")
     private String[] allowedOrigins;
@@ -54,21 +55,22 @@ public class WebConfig implements WebMvcConfigurer {
 
     /**
      * Configuración de CORS para permitir requests desde el frontend NextJS
-     * Sigue los lineamientos de seguridad establecidos en la arquitectura
-     * 
+     * y GraphiQL. Incluye configuración específica para GraphQL.
+     *
      * @param registry registro de configuraciones CORS
      */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         log.info("Configurando CORS - Orígenes permitidos: {}", Arrays.toString(allowedOrigins));
-        
+
+        // Configuración general para todos los endpoints
         registry.addMapping("/**")
                 .allowedOriginPatterns(allowedOrigins)
                 .allowedMethods(allowedMethods.split(","))
                 .allowedHeaders(allowedHeaders.equals("*") ? new String[]{"*"} : allowedHeaders.split(","))
                 .allowCredentials(allowCredentials)
                 .maxAge(maxAge);
-        
+
         // Configuración específica para GraphQL
         registry.addMapping("/graphql")
                 .allowedOriginPatterns(allowedOrigins)
@@ -76,7 +78,15 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedHeaders("*")
                 .allowCredentials(allowCredentials)
                 .maxAge(maxAge);
-        
+
+        // Configuración específica para GraphiQL
+        registry.addMapping("/graphiql/**")
+                .allowedOriginPatterns(allowedOrigins)
+                .allowedMethods("GET", "POST", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(allowCredentials)
+                .maxAge(maxAge);
+
         // Configuración para endpoints de actuator
         registry.addMapping("/actuator/**")
                 .allowedOriginPatterns("http://localhost:*")
@@ -87,69 +97,34 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     /**
-     * Configuración de CORS como bean para uso en Spring Security
-     * 
-     * @return CorsConfigurationSource configurado
-     */
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        log.info("Configurando CorsConfigurationSource");
-        
-        CorsConfiguration configuration = new CorsConfiguration();
-        
-        // Configurar orígenes permitidos
-        configuration.setAllowedOriginPatterns(List.of(allowedOrigins));
-        
-        // Configurar métodos HTTP permitidos
-        configuration.setAllowedMethods(Arrays.asList(allowedMethods.split(",")));
-        
-        // Configurar headers permitidos
-        if (allowedHeaders.equals("*")) {
-            configuration.addAllowedHeader("*");
-        } else {
-            configuration.setAllowedHeaders(Arrays.asList(allowedHeaders.split(",")));
-        }
-        
-        // Configurar headers expuestos
-        configuration.setExposedHeaders(Arrays.asList(
-            "Authorization", 
-            "Content-Type", 
-            "X-Total-Count",
-            "X-Page-Number",
-            "X-Page-Size",
-            "Location"
-        ));
-        
-        // Configurar credenciales
-        configuration.setAllowCredentials(allowCredentials);
-        
-        // Configurar tiempo de cache
-        configuration.setMaxAge(Duration.ofSeconds(maxAge));
-        
-        // Aplicar configuración a todas las rutas
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        
-        return source;
-    }
-
-    /**
-     * Configuración de interceptores
-     * 
+     * Configuración de interceptores incluyendo:
+     * - Interceptor de control de acceso basado en roles
+     * - Interceptor de cambio de idioma
+     *
      * @param registry registro de interceptores
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // Interceptor para cambio de idioma
         registry.addInterceptor(localeChangeInterceptor());
-        
-        // Aquí se pueden agregar más interceptores personalizados
-        // registry.addInterceptor(new CustomInterceptor()).addPathPatterns("/api/**");
+
+        // Interceptor de control de acceso basado en roles
+        // Se aplica a /api/v1/** pero excluye endpoints públicos y de GraphQL
+        registry.addInterceptor(roleBasedAccessInterceptor)
+                .addPathPatterns("/api/v1/**")
+                .excludePathPatterns(
+                        "/api/v1/auth/**",
+                        "/api/v1/graphql",
+                        "/api/v1/graphiql/**",
+                        "/api/v1/actuator/health",
+                        "/api/v1/actuator/info",
+                        "/api/v1/h2-console/**"
+                );
     }
 
     /**
      * Configuración de recursos estáticos
-     * 
+     *
      * @param registry registro de recursos
      */
     @Override
@@ -159,24 +134,17 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:./uploads/")
                 .setCachePeriod(3600)
                 .resourceChain(true);
-        
+
         // Configurar recursos estáticos para documentación
         registry.addResourceHandler("/docs/**")
                 .addResourceLocations("classpath:/static/docs/")
                 .setCachePeriod(86400)
                 .resourceChain(true);
-        
-        // Configurar Swagger UI
-        registry.addResourceHandler("swagger-ui.html")
-                .addResourceLocations("classpath:/META-INF/resources/");
-        
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
     /**
      * Configuración de tipos de contenido
-     * 
+     *
      * @param configurer configurador de tipos de contenido
      */
     @Override
@@ -194,14 +162,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     /**
      * Configuración de rutas de vista simple
-     * 
+     *
      * @param registry registro de controladores de vista
      */
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        // Redireccionar raíz a documentación de API
-        registry.addViewController("/").setViewName("redirect:/swagger-ui.html");
-        
         // Páginas de error personalizadas
         registry.addViewController("/error/403").setViewName("error/403");
         registry.addViewController("/error/404").setViewName("error/404");
@@ -210,11 +175,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     /**
      * Bean para el resolver de locale
-     * 
+     *
      * @return SessionLocaleResolver configurado
      */
-    @Bean
-    public SessionLocaleResolver localeResolver() {
+    @Bean("customLocaleResolver")
+    public SessionLocaleResolver customLocaleResolver() {
         SessionLocaleResolver resolver = new SessionLocaleResolver();
         resolver.setDefaultLocale(new Locale("es", "CO")); // Español de Colombia
         return resolver;
@@ -222,7 +187,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     /**
      * Interceptor para cambio de idioma
-     * 
+     *
      * @return LocaleChangeInterceptor configurado
      */
     @Bean
@@ -234,7 +199,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     /**
      * Configuración de Path Matching
-     * 
+     *
      * @param configurer configurador de path matching
      */
     @Override
@@ -246,7 +211,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     /**
      * Configuración de Message Converters para manejo de JSON/XML
-     * 
+     *
      * @param converters lista de convertidores de mensaje
      */
     @Override
@@ -258,7 +223,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     /**
      * Configuración de manejo de excepciones personalizadas
-     * 
+     *
      * @param resolvers lista de resolvers de excepciones
      */
     @Override
