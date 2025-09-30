@@ -13,6 +13,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 
+/*Resolver GraphQL para manejar mutaciones de autenticación, específicamente el inicio de sesión de usuarios.
+ Proporciona un endpoint para que los usuarios puedan autenticarse y recibir un token JWT.
+ Utiliza validaciones para asegurar que los datos de entrada sean correctos.
+ Autor: Fábrica-Escuela de Software UdeA
+ Versión: 1.0.0
+*/
+
 @Controller
 @Validated
 public class AuthMutationResolver {

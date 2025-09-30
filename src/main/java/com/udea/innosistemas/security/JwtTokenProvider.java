@@ -13,6 +13,12 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+//clase para generar y validar tokens JWT utilizados en la autenticación y autorización de usuarios.
+//Gestiona la creación de tokens, extracción de información y validación de su integridad y expiración.
+// Autor: Fábrica-Escuela de Software UdeA  
+// Versión: 1.0.0
+
+
 @Component
 public class JwtTokenProvider {
 

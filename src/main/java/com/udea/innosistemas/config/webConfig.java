@@ -7,15 +7,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -32,7 +28,6 @@ import java.util.Locale;
  * @version 1.0.0
  */
 @Configuration
-@EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
 
     private static final Logger log = LoggerFactory.getLogger(WebConfig.class);
@@ -86,52 +81,6 @@ public class WebConfig implements WebMvcConfigurer {
                 .maxAge(3600);
     }
 
-    /**
-     * Configuración de CORS como bean para uso en Spring Security
-     * 
-     * @return CorsConfigurationSource configurado
-     */
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        log.info("Configurando CorsConfigurationSource");
-        
-        CorsConfiguration configuration = new CorsConfiguration();
-        
-        // Configurar orígenes permitidos
-        configuration.setAllowedOriginPatterns(List.of(allowedOrigins));
-        
-        // Configurar métodos HTTP permitidos
-        configuration.setAllowedMethods(Arrays.asList(allowedMethods.split(",")));
-        
-        // Configurar headers permitidos
-        if (allowedHeaders.equals("*")) {
-            configuration.addAllowedHeader("*");
-        } else {
-            configuration.setAllowedHeaders(Arrays.asList(allowedHeaders.split(",")));
-        }
-        
-        // Configurar headers expuestos
-        configuration.setExposedHeaders(Arrays.asList(
-            "Authorization", 
-            "Content-Type", 
-            "X-Total-Count",
-            "X-Page-Number",
-            "X-Page-Size",
-            "Location"
-        ));
-        
-        // Configurar credenciales
-        configuration.setAllowCredentials(allowCredentials);
-        
-        // Configurar tiempo de cache
-        configuration.setMaxAge(Duration.ofSeconds(maxAge));
-        
-        // Aplicar configuración a todas las rutas
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        
-        return source;
-    }
 
     /**
      * Configuración de interceptores
@@ -210,11 +159,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     /**
      * Bean para el resolver de locale
-     * 
+     *
      * @return SessionLocaleResolver configurado
      */
-    @Bean
-    public SessionLocaleResolver localeResolver() {
+    @Bean("customLocaleResolver")
+    public SessionLocaleResolver customLocaleResolver() {
         SessionLocaleResolver resolver = new SessionLocaleResolver();
         resolver.setDefaultLocale(new Locale("es", "CO")); // Español de Colombia
         return resolver;

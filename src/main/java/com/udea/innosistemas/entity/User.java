@@ -12,7 +12,19 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+
+/*
+ Entidad User que implementa UserDetails para integración con Spring Security
+ Define los atributos del usuario, validaciones y métodos necesarios para la autenticación y autorización
+ Incluye campos como email, password, role, timestamps y estados de la cuenta
+ Utiliza anotaciones de JPA para el mapeo a la base de datos y validaciones de datos
+ Proporciona métodos para obtener roles y estados de la cuenta requeridos por Spring Security
+ Permite gestionar usuarios de manera segura en la aplicación
+ Autor: Fábrica-Escuela de Software UdeA
+ Versión: 1.0.0
+*/
 @Entity
+
 @Table(name = "users")
 public class User implements UserDetails {
 

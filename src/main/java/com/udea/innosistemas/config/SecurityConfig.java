@@ -24,6 +24,14 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
+/*clase para configurar la seguridad de la aplicación web, 
+configura toda la arquitectura de autenticación, autorización y protección de la aplicación.
+Define políticas de seguridad, manejo de CORS y filtros de autenticación.
+Utiliza JWT para la autenticación sin estado y protege los endpoints según los roles de usuario.
+// Autor: Fábrica-Escuela de Software UdeA
+// Versión: 1.0.0
+*/
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
@@ -65,10 +73,14 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/graphql").permitAll()
+                        .requestMatchers("/graphiql/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/actuator/info").permitAll()
                         .requestMatchers("/actuator/prometheus").hasRole("ADMIN")
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().authenticated()
                 );
 
@@ -81,7 +93,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://innosistemas.udea.edu.co"));
+        configuration.setAllowedOrigins(Arrays.asList(
+            "https://innosistemas.udea.edu.co",
+            "http://localhost:8080",
+            "http://localhost:3000"
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"));
         configuration.setAllowCredentials(true);

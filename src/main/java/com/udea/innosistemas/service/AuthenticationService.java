@@ -18,6 +18,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+//clase para gestionar la autenticación de usuarios en la aplicación.
+//Proporciona métodos para iniciar sesión, validar credenciales y generar tokens JWT.
+//Maneja excepciones específicas para diferentes fallos de autenticación.
+// Autor: Fábrica-Escuela de Software UdeA
+// Versión: 1.0.0
+
 @Service
 public class AuthenticationService {
 

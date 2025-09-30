@@ -29,6 +29,7 @@ import java.util.Properties;
  * @author Fábrica-Escuela de Software UdeA
  * @version 1.0.0
  */
+
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
@@ -138,7 +139,7 @@ public class DatabaseConfig {
         
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan("com.udea.innosistemas.domain.entity");
+        em.setPackagesToScan("com.udea.innosistemas.entity");
         
         // Configurar el proveedor JPA (Hibernate)
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
@@ -186,9 +187,9 @@ public class DatabaseConfig {
         properties.setProperty("hibernate.use_sql_comments", "true");
         
         // Configuración de naming strategy
-        properties.setProperty("hibernate.physical_naming_strategy", 
-            "org.hibernate.boot.model.naming.SnakeCasePhysicalNamingStrategy");
-        properties.setProperty("hibernate.implicit_naming_strategy", 
+        properties.setProperty("hibernate.physical_naming_strategy",
+            "org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy");
+        properties.setProperty("hibernate.implicit_naming_strategy",
             "org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy");
         
         // Optimizaciones de rendimiento
