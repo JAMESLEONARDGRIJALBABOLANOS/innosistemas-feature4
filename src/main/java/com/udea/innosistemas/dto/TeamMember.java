@@ -4,51 +4,37 @@ import com.udea.innosistemas.entity.User;
 import com.udea.innosistemas.entity.UserRole;
 
 /**
- * DTO con información del usuario para respuestas de autenticación.
- * Incluye userId, email, role, teamId, courseId y nombre completo.
+ * DTO con información de un miembro de un equipo.
  *
  * Autor: Fábrica-Escuela de Software UdeA
- * Versión: 2.0.0
+ * Versión: 1.0.0
  */
-public class UserInfo {
+public class TeamMember {
 
     private Long id;
     private String email;
-    private UserRole role;
-    private Long teamId;
-    private Long courseId;
     private String firstName;
     private String lastName;
     private String fullName;
+    private UserRole role;
+    private Long teamId;
+    private Long courseId;
 
-    public UserInfo() {
+    public TeamMember() {
     }
 
-    public UserInfo(Long id, String email, UserRole role) {
-        this.id = id;
-        this.email = email;
-        this.role = role;
-    }
-
-    public UserInfo(Long id, String email, UserRole role, Long teamId, Long courseId) {
-        this.id = id;
-        this.email = email;
-        this.role = role;
-        this.teamId = teamId;
-        this.courseId = courseId;
-    }
-
-    public UserInfo(User user) {
+    public TeamMember(User user) {
         this.id = user.getId();
         this.email = user.getEmail();
-        this.role = user.getRole();
-        this.teamId = user.getTeamId();
-        this.courseId = user.getCourseId();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.fullName = user.getFullName();
+        this.role = user.getRole();
+        this.teamId = user.getTeamId();
+        this.courseId = user.getCourseId();
     }
 
+    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -63,30 +49,6 @@ public class UserInfo {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public UserRole getRole() {
-        return role;
-    }
-
-    public void setRole(UserRole role) {
-        this.role = role;
-    }
-
-    public Long getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(Long teamId) {
-        this.teamId = teamId;
-    }
-
-    public Long getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(Long courseId) {
-        this.courseId = courseId;
     }
 
     public String getFirstName() {
@@ -111,5 +73,29 @@ public class UserInfo {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
+    public Long getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(Long teamId) {
+        this.teamId = teamId;
+    }
+
+    public Long getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
     }
 }
