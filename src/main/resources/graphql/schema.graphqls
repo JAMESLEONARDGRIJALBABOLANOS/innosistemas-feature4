@@ -236,4 +236,72 @@ type TeamMember {
     ID del curso
     """
     courseId: ID
+
+}
+
+"Configuración personalizada de notificaciones para cada usuario."
+type ConfiguracionNotificacion {
+  idConfiguracion: ID
+  idUsuario: ID
+  recibirCorreos: Boolean
+  notificacionesTareas: Boolean
+  notificacionesEquipos: Boolean
+  notificacionesSistema: Boolean
+  alertasVencimiento: Boolean
+  frecuenciaCorreos: String
+}
+
+"Notificación individual enviada a un usuario."
+type Notificacion {
+  idNotificacion: ID
+  tipo: String
+  mensaje: String
+  fecha: String
+  estado: String
+  idUsuario: ID
+  idReferencia: ID
+  canal: String
+  urlDestino: String
+  expiracion: String
+}
+
+"Entrada para crear o actualizar la configuración de notificaciones del usuario."
+input ConfigInput {
+  recibirCorreos: Boolean
+  notificacionesTareas: Boolean
+  notificacionesEquipos: Boolean
+  notificacionesSistema: Boolean
+  alertasVencimiento: Boolean
+  frecuenciaCorreos: String
+}
+
+"Entrada para enviar una nueva notificación."
+input SendNotificationInput {
+  tipo: String
+  mensaje: String
+  idReferencia: ID
+  idUsuario: ID
+  idEquipo: ID
+  canal: String
+  urlDestino: String
+  expiracion: String
+}
+
+extend type Query {
+  "Obtiene la configuración de notificaciones del usuario autenticado."
+  myNotificationConfig: ConfiguracionNotificacion
+
+  "Obtiene las notificaciones del usuario autenticado."
+  myNotifications: [Notificacion]
+
+  "Obtiene las notificaciones de un usuario específico (solo admin, dev o propietario)."
+  notificationsForUser(idUsuario: ID!): [Notificacion]
+}
+
+extend type Mutation {
+  "Guarda o actualiza la configuración de notificaciones del usuario autenticado."
+  saveNotificationConfig(input: ConfigInput!): ConfiguracionNotificacion
+
+  "Envía una notificación a un usuario (solo roles EMISOR o ADMIN)."
+  sendNotification(input: SendNotificationInput!): Notificacion
 }

@@ -26,5 +26,18 @@ public enum UserRole {
     /**
      * Asistente de Enseñanza - Ayuda al profesor con permisos limitados
      */
-    TA
+    TA,
+
+    /**
+     * Emisor: usuarios con permiso para crear y enviar notificaciones o correos masivos
+     */
+    EMISOR,
+    /**
+     * Receptor: usuarios que reciben notificaciones, alertas o correos
+     */
+    RECEPTOR,
+    /**
+     * Permisos técnicos de lectura y diagnóstico.
+     */
+    DEVELOPER
 }
