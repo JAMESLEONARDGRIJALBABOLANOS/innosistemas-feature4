@@ -2,7 +2,6 @@ package com.udea.innosistemas.service;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Refill;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -102,10 +101,10 @@ public class RateLimitingService {
      * @return Bucket configurado
      */
     private Bucket createNewBucket() {
-        Bandwidth limit = Bandwidth.classic(
-                defaultCapacity,
-                Refill.intervally(defaultRefillTokens, Duration.ofMinutes(defaultRefillPeriodMinutes))
-        );
+        Bandwidth limit = Bandwidth.builder()
+                .capacity(defaultCapacity)
+                .refillIntervally(defaultRefillTokens, Duration.ofMinutes(defaultRefillPeriodMinutes))
+                .build();
         return Bucket.builder()
                 .addLimit(limit)
                 .build();
@@ -117,10 +116,10 @@ public class RateLimitingService {
      * @return Bucket configurado para auth
      */
     private Bucket createAuthBucket() {
-        Bandwidth limit = Bandwidth.classic(
-                authCapacity,
-                Refill.intervally(authRefillTokens, Duration.ofMinutes(authRefillPeriodMinutes))
-        );
+        Bandwidth limit = Bandwidth.builder()
+                .capacity(authCapacity)
+                .refillIntervally(authRefillTokens, Duration.ofMinutes(authRefillPeriodMinutes))
+                .build();
         return Bucket.builder()
                 .addLimit(limit)
                 .build();

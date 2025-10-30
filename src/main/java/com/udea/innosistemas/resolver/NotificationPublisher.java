@@ -84,7 +84,7 @@ public class NotificationPublisher {
                     "tipoEvento", event.getTipoEvento().name(),
                     "usuarioOrigenId", event.getUsuarioOrigenId() != null ? event.getUsuarioOrigenId() : 0,
                     "detalles", event.getDetalles(),
-                    "timestamp", event.getTimestamp().toString(),
+                    "timestamp", event.getEventTimestamp().toString(),
                     "metadata", event.getMetadata() != null ? event.getMetadata() : ""
             );
 
@@ -106,7 +106,7 @@ public class NotificationPublisher {
         logger.info("Creando suscripción de notificaciones para usuario {}", userId);
 
         Sinks.Many<NotificationDTO> sink = notificationSinks.computeIfAbsent(userId, id -> {
-            Sinks.Many<NotificationDTO> newSink = Sinks.many().multicast().directBestEffort();
+            Sinks.Many<NotificationDTO> newSink = Sinks.many().multicast().onBackpressureBuffer();
             logger.debug("Nuevo sink creado para usuario {}", id);
             return newSink;
         });
@@ -132,7 +132,7 @@ public class NotificationPublisher {
         logger.info("Creando suscripción de eventos para equipo {}", teamId);
 
         Sinks.Many<Map<String, Object>> sink = teamEventSinks.computeIfAbsent(teamId, id -> {
-            Sinks.Many<Map<String, Object>> newSink = Sinks.many().multicast().directBestEffort();
+            Sinks.Many<Map<String, Object>> newSink = Sinks.many().multicast().onBackpressureBuffer();
             logger.debug("Nuevo sink de eventos creado para equipo {}", id);
             return newSink;
         });
@@ -157,7 +157,7 @@ public class NotificationPublisher {
         logger.info("Creando suscripción de contador de no leídas para usuario {}", userId);
 
         Sinks.Many<Map<String, Object>> sink = unreadCountSinks.computeIfAbsent(userId, id -> {
-            Sinks.Many<Map<String, Object>> newSink = Sinks.many().multicast().directBestEffort();
+            Sinks.Many<Map<String, Object>> newSink = Sinks.many().multicast().onBackpressureBuffer();
             logger.debug("Nuevo sink de contador creado para usuario {}", id);
             return newSink;
         });

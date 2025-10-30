@@ -151,9 +151,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
         configurer
                 .favorParameter(false)
-                .favorPathExtension(false)
                 .ignoreAcceptHeader(false)
-                .useRegisteredExtensionsOnly(false)
                 .defaultContentType(MediaType.APPLICATION_JSON)
                 .mediaType("json", MediaType.APPLICATION_JSON)
                 .mediaType("xml", MediaType.APPLICATION_XML)
@@ -199,14 +197,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     /**
      * Configuración de Path Matching
+     * Nota: Las opciones setUseTrailingSlashMatch y setUseSuffixPatternMatch fueron
+     * deprecadas y removidas en Spring Framework 6.0+. El comportamiento por defecto
+     * ya no permite coincidencias de sufijos ni barras finales.
      *
      * @param configurer configurador de path matching
      */
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
-        configurer
-                .setUseTrailingSlashMatch(false)
-                .setUseSuffixPatternMatch(false);
+        // La configuración moderna de path matching se maneja automáticamente
+        // No se requiere configuración explícita para el comportamiento estricto
     }
 
     /**

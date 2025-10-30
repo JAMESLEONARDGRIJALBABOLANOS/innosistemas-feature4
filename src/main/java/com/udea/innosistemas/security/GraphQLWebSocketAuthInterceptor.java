@@ -2,7 +2,6 @@ package com.udea.innosistemas.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -32,11 +31,13 @@ public class GraphQLWebSocketAuthInterceptor implements ChannelInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(GraphQLWebSocketAuthInterceptor.class);
 
-    @Autowired
-    private JwtTokenProvider tokenProvider;
+    private final JwtTokenProvider tokenProvider;
+    private final UserDetailsService userDetailsService;
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    public GraphQLWebSocketAuthInterceptor(JwtTokenProvider tokenProvider, UserDetailsService userDetailsService) {
+        this.tokenProvider = tokenProvider;
+        this.userDetailsService = userDetailsService;
+    }
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -54,7 +55,7 @@ public class GraphQLWebSocketAuthInterceptor implements ChannelInterceptor {
             }
 
             if (token != null && tokenProvider.validateToken(token)) {
-                String username = tokenProvider.getUsernameFromToken(token);
+                String username = tokenProvider.getUsernameFromJWT(token);
                 logger.info("Autenticando usuario en WebSocket: {}", username);
 
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);

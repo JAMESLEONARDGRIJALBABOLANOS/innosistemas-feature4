@@ -3,8 +3,6 @@ package com.udea.innosistemas.resolver;
 import com.udea.innosistemas.dto.TeamDTO;
 import com.udea.innosistemas.entity.Team;
 import com.udea.innosistemas.entity.User;
-import com.udea.innosistemas.exception.AuthenticationException;
-import com.udea.innosistemas.repository.UserRepository;
 import com.udea.innosistemas.service.TeamService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
@@ -25,11 +21,13 @@ import java.util.Map;
  * Resolver GraphQL para mutaciones de equipos
  * Maneja todas las operaciones de escritura de equipos
  *
+ * Refactorizado usando patrón Template Method (BaseResolver)
+ *
  * Autor: Fábrica-Escuela de Software UdeA
- * Versión: 1.0.0
+ * Versión: 2.0.0
  */
 @Controller
-public class TeamMutationResolver {
+public class TeamMutationResolver extends BaseResolver {
 
     private static final Logger logger = LoggerFactory.getLogger(TeamMutationResolver.class);
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
@@ -37,12 +35,10 @@ public class TeamMutationResolver {
     @Autowired
     private TeamService teamService;
 
-    @Autowired
-    private UserRepository userRepository;
-
     /**
      * Crea un nuevo equipo
      * Solo accesible para profesores y admins
+     * Usa BaseResolver para extraer valores del Map
      *
      * @param input Datos del equipo a crear
      * @return TeamDTO creado
@@ -53,23 +49,26 @@ public class TeamMutationResolver {
         logger.info("Creando nuevo equipo: {}", input);
 
         Team team = new Team();
-        team.setNombre(input.get("nombre").toString());
+        team.setNombre(extractString(input, "nombre")); // Método de BaseResolver
 
-        if (input.containsKey("descripcion") && input.get("descripcion") != null) {
-            team.setDescripcion(input.get("descripcion").toString());
+        String descripcion = extractString(input, "descripcion");
+        if (descripcion != null) {
+            team.setDescripcion(descripcion);
         }
 
-        if (input.containsKey("fechaLimite") && input.get("fechaLimite") != null) {
-            String fechaStr = input.get("fechaLimite").toString();
-            team.setFechaLimite(LocalDateTime.parse(fechaStr, DATE_FORMATTER));
+        String fechaLimite = extractString(input, "fechaLimite");
+        if (fechaLimite != null) {
+            team.setFechaLimite(LocalDateTime.parse(fechaLimite, DATE_FORMATTER));
         }
 
-        if (input.containsKey("courseId") && input.get("courseId") != null) {
-            team.setCourseId(Long.parseLong(input.get("courseId").toString()));
+        Long courseId = extractLong(input, "courseId");
+        if (courseId != null) {
+            team.setCourseId(courseId);
         }
 
-        if (input.containsKey("maxMiembros") && input.get("maxMiembros") != null) {
-            team.setMaxMiembros((Integer) input.get("maxMiembros"));
+        Integer maxMiembros = extractInteger(input, "maxMiembros");
+        if (maxMiembros != null) {
+            team.setMaxMiembros(maxMiembros);
         }
 
         Team nuevoTeam = teamService.crearTeam(team);
@@ -81,6 +80,7 @@ public class TeamMutationResolver {
     /**
      * Actualiza un equipo existente
      * Solo accesible para profesores y admins
+     * Usa BaseResolver para extraer valores del Map
      *
      * @param id ID del equipo a actualizar
      * @param input Datos actualizados
@@ -93,25 +93,29 @@ public class TeamMutationResolver {
 
         Team teamActualizado = new Team();
 
-        if (input.containsKey("nombre") && input.get("nombre") != null) {
-            teamActualizado.setNombre(input.get("nombre").toString());
+        String nombre = extractString(input, "nombre");
+        if (nombre != null) {
+            teamActualizado.setNombre(nombre);
         }
 
-        if (input.containsKey("descripcion") && input.get("descripcion") != null) {
-            teamActualizado.setDescripcion(input.get("descripcion").toString());
+        String descripcion = extractString(input, "descripcion");
+        if (descripcion != null) {
+            teamActualizado.setDescripcion(descripcion);
         }
 
-        if (input.containsKey("fechaLimite") && input.get("fechaLimite") != null) {
-            String fechaStr = input.get("fechaLimite").toString();
-            teamActualizado.setFechaLimite(LocalDateTime.parse(fechaStr, DATE_FORMATTER));
+        String fechaLimite = extractString(input, "fechaLimite");
+        if (fechaLimite != null) {
+            teamActualizado.setFechaLimite(LocalDateTime.parse(fechaLimite, DATE_FORMATTER));
         }
 
-        if (input.containsKey("activo") && input.get("activo") != null) {
-            teamActualizado.setActivo((Boolean) input.get("activo"));
+        Boolean activo = extractBoolean(input, "activo");
+        if (activo != null) {
+            teamActualizado.setActivo(activo);
         }
 
-        if (input.containsKey("maxMiembros") && input.get("maxMiembros") != null) {
-            teamActualizado.setMaxMiembros((Integer) input.get("maxMiembros"));
+        Integer maxMiembros = extractInteger(input, "maxMiembros");
+        if (maxMiembros != null) {
+            teamActualizado.setMaxMiembros(maxMiembros);
         }
 
         Team team = teamService.actualizarTeam(id, teamActualizado);
@@ -171,6 +175,7 @@ public class TeamMutationResolver {
 
     /**
      * Un usuario se une a un equipo (acepta invitación)
+     * Usa BaseResolver para obtener el usuario actual
      *
      * @param teamId ID del equipo
      * @return TeamDTO al que se unió
@@ -180,7 +185,7 @@ public class TeamMutationResolver {
     public TeamDTO joinTeam(@Argument Long teamId) {
         logger.info("Usuario actual uniéndose al equipo {}", teamId);
 
-        User currentUser = getCurrentUser();
+        User currentUser = getCurrentUser(); // Método de BaseResolver
         Team team = teamService.unirseAEquipo(teamId, currentUser.getId());
         List<User> miembros = userRepository.findByTeamId(team.getId());
 
@@ -189,6 +194,7 @@ public class TeamMutationResolver {
 
     /**
      * Un usuario abandona su equipo
+     * Usa BaseResolver para obtener el usuario actual
      *
      * @param teamId ID del equipo
      * @return LeaveTeamResponse
@@ -198,7 +204,7 @@ public class TeamMutationResolver {
     public Map<String, Object> leaveTeam(@Argument Long teamId) {
         logger.info("Usuario actual abandonando el equipo {}", teamId);
 
-        User currentUser = getCurrentUser();
+        User currentUser = getCurrentUser(); // Método de BaseResolver
 
         try {
             teamService.abandonarEquipo(teamId, currentUser.getId());
@@ -244,19 +250,4 @@ public class TeamMutationResolver {
         }
     }
 
-    /**
-     * Obtiene el usuario autenticado actual
-     *
-     * @return User
-     */
-    private User getCurrentUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        if (username == null || username.equals("anonymousUser")) {
-            throw new AuthenticationException("No hay usuario autenticado");
-        }
-
-        return userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
-    }
 }

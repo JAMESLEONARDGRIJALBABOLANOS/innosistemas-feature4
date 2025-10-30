@@ -118,4 +118,84 @@ public class CreateNotificationRequest {
     public void setExpiraEn(LocalDateTime expiraEn) {
         this.expiraEn = expiraEn;
     }
+
+    /**
+     * Builder para CreateNotificationRequest
+     * Patrón: Builder
+     * Facilita la creación de objetos complejos con muchos parámetros opcionales
+     */
+    public static class Builder {
+        private Long userId;
+        private String tipo;
+        private String mensaje;
+        private Long teamId;
+        private Long cursoId;
+        private String metadata;
+        private String prioridad;
+        private String enlace;
+        private LocalDateTime expiraEn;
+
+        public Builder userId(Long userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder tipo(String tipo) {
+            this.tipo = tipo;
+            return this;
+        }
+
+        public Builder mensaje(String mensaje) {
+            this.mensaje = mensaje;
+            return this;
+        }
+
+        public Builder teamId(Long teamId) {
+            this.teamId = teamId;
+            return this;
+        }
+
+        public Builder cursoId(Long cursoId) {
+            this.cursoId = cursoId;
+            return this;
+        }
+
+        public Builder metadata(String metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+
+        public Builder prioridad(String prioridad) {
+            this.prioridad = prioridad;
+            return this;
+        }
+
+        public Builder enlace(String enlace) {
+            this.enlace = enlace;
+            return this;
+        }
+
+        public Builder expiraEn(LocalDateTime expiraEn) {
+            this.expiraEn = expiraEn;
+            return this;
+        }
+
+        public CreateNotificationRequest build() {
+            CreateNotificationRequest request = new CreateNotificationRequest();
+            request.setUserId(this.userId);
+            request.setTipo(this.tipo);
+            request.setMensaje(this.mensaje);
+            request.setTeamId(this.teamId);
+            request.setCursoId(this.cursoId);
+            request.setMetadata(this.metadata);
+            request.setPrioridad(this.prioridad);
+            request.setEnlace(this.enlace);
+            request.setExpiraEn(this.expiraEn);
+            return request;
+        }
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 }

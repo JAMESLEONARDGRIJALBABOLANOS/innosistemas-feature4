@@ -58,7 +58,7 @@ public class TeamEvent extends ApplicationEvent {
         return detalles;
     }
 
-    public LocalDateTime getTimestamp() {
+    public LocalDateTime getEventTimestamp() {
         return timestamp;
     }
 

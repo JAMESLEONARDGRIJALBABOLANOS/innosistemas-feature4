@@ -2,19 +2,15 @@ package com.udea.innosistemas.resolver;
 
 import com.udea.innosistemas.dto.CreateNotificationRequest;
 import com.udea.innosistemas.dto.NotificationDTO;
-import com.udea.innosistemas.entity.User;
-import com.udea.innosistemas.entity.UserRole;
-import com.udea.innosistemas.exception.AuthenticationException;
-import com.udea.innosistemas.repository.UserRepository;
+import com.udea.innosistemas.factory.NotificationRequestFactory;
 import com.udea.innosistemas.service.NotificationService;
+import com.udea.innosistemas.strategy.NotificationStrategyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 
 import java.util.Map;
@@ -23,11 +19,16 @@ import java.util.Map;
  * Resolver GraphQL para mutaciones de notificaciones
  * Maneja todas las operaciones de escritura de notificaciones
  *
+ * Refactorizado usando patrones:
+ * - Template Method (BaseResolver)
+ * - Factory (NotificationRequestFactory)
+ * - Strategy (NotificationStrategyContext)
+ *
  * Autor: Fábrica-Escuela de Software UdeA
- * Versión: 1.0.0
+ * Versión: 2.0.0
  */
 @Controller
-public class NotificationMutationResolver {
+public class NotificationMutationResolver extends BaseResolver {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationMutationResolver.class);
 
@@ -35,11 +36,12 @@ public class NotificationMutationResolver {
     private NotificationService notificationService;
 
     @Autowired
-    private UserRepository userRepository;
+    private NotificationStrategyContext strategyContext;
 
     /**
      * Crea una nueva notificación
      * Solo accesible para profesores y administradores
+     * Usa Factory para crear el request y Strategy para procesarlo
      *
      * @param input Datos de la notificación a crear
      * @return NotificationDTO creada
@@ -49,32 +51,19 @@ public class NotificationMutationResolver {
     public NotificationDTO createNotification(@Argument Map<String, Object> input) {
         logger.info("Creando notificación con input: {}", input);
 
-        CreateNotificationRequest request = new CreateNotificationRequest();
-        request.setUserId(Long.parseLong(input.get("userId").toString()));
-        request.setTipo(input.get("tipo").toString());
-        request.setMensaje(input.get("mensaje").toString());
+        // Usar Factory para construir el request desde el Map
+        CreateNotificationRequest request = NotificationRequestFactory.fromMap(input);
 
-        if (input.containsKey("teamId") && input.get("teamId") != null) {
-            request.setTeamId(Long.parseLong(input.get("teamId").toString()));
-        }
-        if (input.containsKey("cursoId") && input.get("cursoId") != null) {
-            request.setCursoId(Long.parseLong(input.get("cursoId").toString()));
-        }
-        if (input.containsKey("metadata") && input.get("metadata") != null) {
-            request.setMetadata(input.get("metadata").toString());
-        }
-        if (input.containsKey("prioridad") && input.get("prioridad") != null) {
-            request.setPrioridad(input.get("prioridad").toString());
-        }
-        if (input.containsKey("enlace") && input.get("enlace") != null) {
-            request.setEnlace(input.get("enlace").toString());
-        }
+        // Usar Strategy para validar y procesar según el tipo
+        request = strategyContext.processNotification(request);
 
+        // Crear la notificación
         return notificationService.crearNotificacion(request);
     }
 
     /**
      * Marca una notificación como leída
+     * Usa BaseResolver para obtener el usuario actual
      *
      * @param id ID de la notificación
      * @return NotificationDTO actualizada
@@ -84,7 +73,7 @@ public class NotificationMutationResolver {
     public NotificationDTO markNotificationAsRead(@Argument Long id) {
         logger.info("Marcando notificación {} como leída", id);
 
-        Long userId = getCurrentUserId();
+        Long userId = getCurrentUserId(); // Método de BaseResolver
 
         // Verificar que la notificación pertenece al usuario actual
         NotificationDTO notification = notificationService.obtenerNotificacionesPorUsuario(userId)
@@ -98,6 +87,7 @@ public class NotificationMutationResolver {
 
     /**
      * Marca todas las notificaciones del usuario como leídas
+     * Usa BaseResolver para obtener el usuario actual
      *
      * @return Respuesta con el número de notificaciones marcadas
      */
@@ -106,7 +96,7 @@ public class NotificationMutationResolver {
     public Map<String, Object> markAllNotificationsAsRead() {
         logger.info("Marcando todas las notificaciones como leídas para el usuario actual");
 
-        Long userId = getCurrentUserId();
+        Long userId = getCurrentUserId(); // Método de BaseResolver
         int count = notificationService.marcarTodasComoLeidas(userId);
 
         return Map.of(
@@ -119,6 +109,7 @@ public class NotificationMutationResolver {
     /**
      * Elimina una notificación específica
      * (Nota: Este método requiere implementar la lógica de eliminación en el servicio)
+     * Usa BaseResolver para obtener el usuario actual
      *
      * @param id ID de la notificación
      * @return Respuesta de eliminación
@@ -128,7 +119,7 @@ public class NotificationMutationResolver {
     public Map<String, Object> deleteNotification(@Argument Long id) {
         logger.info("Eliminando notificación {}", id);
 
-        Long userId = getCurrentUserId();
+        Long userId = getCurrentUserId(); // Método de BaseResolver
 
         // Verificar que la notificación pertenece al usuario actual
         NotificationDTO notification = notificationService.obtenerNotificacionesPorUsuario(userId)
@@ -143,38 +134,5 @@ public class NotificationMutationResolver {
                 "success", true,
                 "message", "Notificación eliminada exitosamente"
         );
-    }
-
-    /**
-     * Obtiene el ID del usuario autenticado desde el contexto de seguridad
-     *
-     * @return ID del usuario
-     */
-    private Long getCurrentUserId() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        if (username == null || username.equals("anonymousUser")) {
-            throw new AuthenticationException("No hay usuario autenticado");
-        }
-
-        User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
-
-        return user.getId();
-    }
-
-    /**
-     * Verifica si el usuario actual tiene rol de profesor o admin
-     *
-     * @return true si es profesor o admin
-     */
-    private boolean isCurrentUserProfessorOrAdmin() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
-
-        return user.getRole() == UserRole.PROFESSOR ||
-               user.getRole() == UserRole.ADMIN ||
-               user.getRole() == UserRole.TA;
     }
 }

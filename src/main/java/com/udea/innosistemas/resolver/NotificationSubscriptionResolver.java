@@ -1,18 +1,13 @@
 package com.udea.innosistemas.resolver;
 
 import com.udea.innosistemas.dto.NotificationDTO;
-import com.udea.innosistemas.dto.TeamEventDTO;
 import com.udea.innosistemas.entity.User;
-import com.udea.innosistemas.exception.AuthenticationException;
-import com.udea.innosistemas.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.SubscriptionMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 
@@ -24,18 +19,16 @@ import java.util.Map;
  * Resolver GraphQL para suscripciones (Subscriptions) de notificaciones
  * Maneja las suscripciones en tiempo real usando GraphQL Subscriptions con WebSockets
  *
+ * Refactorizado usando patrón Template Method (BaseResolver)
  * Las suscripciones retornan Flux de Reactor para streaming de datos en tiempo real
  *
  * Autor: Fábrica-Escuela de Software UdeA
- * Versión: 1.0.0
+ * Versión: 2.0.0
  */
 @Controller
-public class NotificationSubscriptionResolver {
+public class NotificationSubscriptionResolver extends BaseResolver {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationSubscriptionResolver.class);
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired(required = false) // Será inyectado cuando se cree
     private NotificationPublisher notificationPublisher;
@@ -76,7 +69,7 @@ public class NotificationSubscriptionResolver {
      */
     @SubscriptionMapping
     @PreAuthorize("isAuthenticated()")
-    public Flux<Map<String, Object>> onTeamEvent(@Argument(required = false) Long teamId) {
+    public Flux<Map<String, Object>> onTeamEvent(@Argument Long teamId) {
         User currentUser = getCurrentUser();
         Long targetTeamId = (teamId != null) ? teamId : currentUser.getTeamId();
 
@@ -121,21 +114,5 @@ public class NotificationSubscriptionResolver {
                 "count", 0,
                 "timestamp", LocalDateTime.now().toString()
         ));
-    }
-
-    /**
-     * Obtiene el usuario autenticado actual
-     *
-     * @return User
-     */
-    private User getCurrentUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        if (username == null || username.equals("anonymousUser")) {
-            throw new AuthenticationException("No hay usuario autenticado");
-        }
-
-        return userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
     }
 }

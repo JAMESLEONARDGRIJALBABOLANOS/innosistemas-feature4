@@ -1,16 +1,11 @@
 package com.udea.innosistemas.resolver;
 
 import com.udea.innosistemas.dto.NotificationDTO;
-import com.udea.innosistemas.entity.User;
-import com.udea.innosistemas.exception.AuthenticationException;
-import com.udea.innosistemas.repository.UserRepository;
 import com.udea.innosistemas.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -19,17 +14,16 @@ import java.util.List;
  * Resolver GraphQL para consultas (Queries) de notificaciones
  * Maneja todas las operaciones de lectura de notificaciones
  *
+ * Refactorizado usando patrón Template Method (BaseResolver)
+ *
  * Autor: Fábrica-Escuela de Software UdeA
- * Versión: 1.0.0
+ * Versión: 2.0.0
  */
 @Controller
-public class NotificationQueryResolver {
+public class NotificationQueryResolver extends BaseResolver {
 
     @Autowired
     private NotificationService notificationService;
-
-    @Autowired
-    private UserRepository userRepository;
 
     /**
      * Obtiene todas las notificaciones del usuario autenticado
@@ -113,21 +107,4 @@ public class NotificationQueryResolver {
                 .orElse(null);
     }
 
-    /**
-     * Obtiene el ID del usuario autenticado desde el contexto de seguridad
-     *
-     * @return ID del usuario
-     */
-    private Long getCurrentUserId() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        if (username == null || username.equals("anonymousUser")) {
-            throw new AuthenticationException("No hay usuario autenticado");
-        }
-
-        User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
-
-        return user.getId();
-    }
 }

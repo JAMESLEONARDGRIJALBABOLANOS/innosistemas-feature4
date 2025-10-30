@@ -4,6 +4,7 @@ import com.udea.innosistemas.entity.User;
 import com.udea.innosistemas.entity.UserRole;
 import com.udea.innosistemas.repository.UserRepository;
 import graphql.schema.DataFetcher;
+import graphql.schema.FieldCoordinates;
 import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.idl.SchemaDirectiveWiring;
 import graphql.schema.idl.SchemaDirectiveWiringEnvironment;
@@ -34,8 +35,12 @@ public class RequiresTeamDirective implements SchemaDirectiveWiring {
     @Override
     public GraphQLFieldDefinition onField(SchemaDirectiveWiringEnvironment<GraphQLFieldDefinition> environment) {
         GraphQLFieldDefinition field = environment.getElement();
+        FieldCoordinates coordinates = FieldCoordinates.coordinates(
+                environment.getFieldsContainer().getName(),
+                field.getName()
+        );
         DataFetcher<?> originalDataFetcher = environment.getCodeRegistry().getDataFetcher(
-                environment.getFieldsContainer(),
+                coordinates,
                 field
         );
 
@@ -81,8 +86,7 @@ public class RequiresTeamDirective implements SchemaDirectiveWiring {
         };
 
         environment.getCodeRegistry().dataFetcher(
-                environment.getFieldsContainer(),
-                field,
+                coordinates,
                 teamDataFetcher
         );
 

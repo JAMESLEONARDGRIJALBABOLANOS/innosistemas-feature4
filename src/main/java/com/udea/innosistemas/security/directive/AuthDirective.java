@@ -1,6 +1,7 @@
 package com.udea.innosistemas.security.directive;
 
 import graphql.schema.DataFetcher;
+import graphql.schema.FieldCoordinates;
 import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.idl.SchemaDirectiveWiring;
 import graphql.schema.idl.SchemaDirectiveWiringEnvironment;
@@ -26,8 +27,12 @@ public class AuthDirective implements SchemaDirectiveWiring {
     @Override
     public GraphQLFieldDefinition onField(SchemaDirectiveWiringEnvironment<GraphQLFieldDefinition> environment) {
         GraphQLFieldDefinition field = environment.getElement();
+        FieldCoordinates coordinates = FieldCoordinates.coordinates(
+                environment.getFieldsContainer().getName(),
+                field.getName()
+        );
         DataFetcher<?> originalDataFetcher = environment.getCodeRegistry().getDataFetcher(
-                environment.getFieldsContainer(),
+                coordinates,
                 field
         );
 
@@ -47,8 +52,7 @@ public class AuthDirective implements SchemaDirectiveWiring {
         };
 
         environment.getCodeRegistry().dataFetcher(
-                environment.getFieldsContainer(),
-                field,
+                coordinates,
                 authDataFetcher
         );
 

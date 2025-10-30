@@ -29,7 +29,7 @@ public class NotificationScheduler {
 
     /**
      * Verifica equipos con fechas límite próximas cada 6 horas
-     * Cron: 0 0 */6 * * * (cada 6 horas en punto)
+     * Cron: 0 0 *&#47;6 * * * (cada 6 horas en punto)
      */
     @Scheduled(cron = "0 0 */6 * * *")
     public void verificarFechasLimiteProximas() {

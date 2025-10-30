@@ -5,8 +5,6 @@ import com.udea.innosistemas.dto.TeamMember;
 import com.udea.innosistemas.entity.Team;
 import com.udea.innosistemas.entity.User;
 import com.udea.innosistemas.entity.UserRole;
-import com.udea.innosistemas.exception.AuthenticationException;
-import com.udea.innosistemas.repository.UserRepository;
 import com.udea.innosistemas.service.TeamService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +13,6 @@ import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -26,24 +22,24 @@ import java.util.stream.Collectors;
  * Resolver GraphQL para consultas (Queries) de equipos
  * Maneja todas las operaciones de lectura de equipos
  *
+ * Refactorizado usando patrón Template Method (BaseResolver)
+ *
  * Autor: Fábrica-Escuela de Software UdeA
- * Versión: 1.0.0
+ * Versión: 2.0.0
  */
 @Controller
-public class TeamQueryResolver {
+public class TeamQueryResolver extends BaseResolver {
 
     private static final Logger logger = LoggerFactory.getLogger(TeamQueryResolver.class);
 
     @Autowired
     private TeamService teamService;
 
-    @Autowired
-    private UserRepository userRepository;
-
     /**
      * Obtiene un equipo por su ID
      * Estudiantes solo pueden ver su propio equipo
      * Profesores y admins pueden ver cualquier equipo
+     * Usa BaseResolver para validar permisos
      *
      * @param id ID del equipo
      * @return TeamDTO
@@ -53,17 +49,11 @@ public class TeamQueryResolver {
     public TeamDTO getTeamById(@Argument Long id) {
         logger.info("Obteniendo equipo por ID: {}", id);
 
-        User currentUser = getCurrentUser();
+        // Validar acceso al equipo usando BaseResolver
+        validateTeamAccess(id);
 
         Team team = teamService.obtenerTeamPorId(id)
                 .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
-
-        // Validar permisos
-        if (currentUser.getRole() == UserRole.STUDENT) {
-            if (!id.equals(currentUser.getTeamId())) {
-                throw new AuthenticationException("No tienes permiso para ver este equipo");
-            }
-        }
 
         // Obtener miembros del equipo
         List<User> miembros = userRepository.findByTeamId(id);
@@ -160,19 +150,4 @@ public class TeamQueryResolver {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Obtiene el usuario autenticado actual
-     *
-     * @return User
-     */
-    private User getCurrentUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        if (username == null || username.equals("anonymousUser")) {
-            throw new AuthenticationException("No hay usuario autenticado");
-        }
-
-        return userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
-    }
 }
