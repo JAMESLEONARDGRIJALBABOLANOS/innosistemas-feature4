@@ -30,6 +30,12 @@ LABEL version="1.0.0"
 
 WORKDIR /app
 
+# Instalar curl para health check
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Crear un usuario no-root para mayor seguridad
 RUN groupadd -r innosistemas && useradd -r -g innosistemas innosistemas
 
