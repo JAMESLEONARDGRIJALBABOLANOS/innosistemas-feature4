@@ -20,8 +20,8 @@ spring:
   # Configuración de base de datos PostgreSQL con Supabase
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/innosistemas}
-    username: ${DATABASE_USERNAME:postgres}
-    password: ${DATABASE_PASSWORD:password}
+    username: ${DATABASE_USERNAME:usuario}
+    password: ${DATABASE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
     hikari:
       pool-name: InnoSistemas-HikariCP
@@ -280,6 +280,13 @@ spring:
       introspection:
         enabled: true
 
+  management:
+    health:
+      redis:
+        enabled: false
+      mail:
+        enabled: false
+
 logging:
   level:
     com.udea.innosistemas: INFO
@@ -289,7 +296,7 @@ logging:
 
 innosistemas:
   cors:
-    allowed-origins: http://localhost:3000,http://localhost:8080,http://localhost:8080/api/v1
+    allowed-origins: http://localhost:3000,http://localhost:8080,http://localhost:8081,http://localhost:8080/api/v1
 
 ---
 spring:

@@ -24,6 +24,9 @@
         <sonar.projectKey>JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4</sonar.projectKey>
         <sonar.organization>jamesleonardgrijalbabolanos</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <spring.datasource.url>jdbc:postgresql://localhost:5432/innosistemas</spring.datasource.url>
+        <spring.datasource.username>usuario</spring.datasource.username>
+        <spring.datasource.password>postgres</spring.datasource.password>
     </properties>
 
     <dependencies>

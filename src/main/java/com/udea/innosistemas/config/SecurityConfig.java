@@ -128,10 +128,11 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList(
             "https://innosistemas.udea.edu.co",
             "http://localhost:8080",
+            "http://localhost:8081",
             "http://localhost:3000"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
