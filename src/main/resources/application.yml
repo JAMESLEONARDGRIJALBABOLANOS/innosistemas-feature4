@@ -55,6 +55,16 @@ spring:
           use_second_level_cache: false
           use_query_cache: false
 
+  # Configuración de Flyway para migraciones automáticas
+  flyway:
+    enabled: ${FLYWAY_ENABLED:true}
+    baseline-on-migrate: ${FLYWAY_BASELINE:true}
+    locations: classpath:db/migration
+    baseline-version: 0
+    validate-on-migrate: true
+    out-of-order: false
+    clean-disabled: true
+
   # Configuración de Spring Security
   security:
     oauth2:
