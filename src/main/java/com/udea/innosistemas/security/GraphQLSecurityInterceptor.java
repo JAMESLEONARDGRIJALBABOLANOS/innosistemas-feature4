@@ -47,9 +47,11 @@ public class GraphQLSecurityInterceptor implements WebGraphQlInterceptor {
         if (authentication == null || !authentication.isAuthenticated() ||
             "anonymousUser".equals(authentication.getName())) {
 
-            // Permitir operaciones de autenticación
+            // Permitir operaciones de autenticación y registro
             if (document != null && (document.contains("mutation login") ||
-                                    document.contains("mutation refreshToken"))) {
+                                    document.contains("mutation refreshToken") ||
+                                    document.contains("mutation registerUser") ||
+                                    document.contains("mutation RegisterUser"))) {
                 return chain.next(request);
             }
 
