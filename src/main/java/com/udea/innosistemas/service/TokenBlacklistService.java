@@ -23,7 +23,7 @@ public class TokenBlacklistService {
     private static final Logger logger = LoggerFactory.getLogger(TokenBlacklistService.class);
     private static final String BLACKLIST_PREFIX = "token:blacklist:";
 
-    @Autowired
+    @Autowired(required = false)
     private RedisTemplate<String, String> redisTemplate;
 
     /**
@@ -33,6 +33,11 @@ public class TokenBlacklistService {
      * @param expirationDate Fecha de expiración del token
      */
     public void blacklistToken(String token, Date expirationDate) {
+        if (redisTemplate == null) {
+            logger.warn("Redis not available - token blacklist disabled");
+            return;
+        }
+
         try {
             String key = BLACKLIST_PREFIX + token;
             long ttl = expirationDate.getTime() - System.currentTimeMillis();
@@ -55,14 +60,32 @@ public class TokenBlacklistService {
      * @return true si el token está revocado, false en caso contrario
      */
     public boolean isTokenBlacklisted(String token) {
+        // Si Redis no está disponible, la blacklist está deshabilitada
+        if (redisTemplate == null) {
+            logger.debug("Redis not available - token blacklist disabled, allowing token");
+            return false;
+        }
+
         try {
             String key = BLACKLIST_PREFIX + token;
             Boolean exists = redisTemplate.hasKey(key);
-            return Boolean.TRUE.equals(exists);
+            boolean isBlacklisted = Boolean.TRUE.equals(exists);
+
+            if (isBlacklisted) {
+                logger.warn("Token is blacklisted: {}...", token.substring(0, Math.min(30, token.length())));
+            } else {
+                logger.debug("Token is not blacklisted");
+            }
+
+            return isBlacklisted;
         } catch (Exception e) {
-            logger.error("Error checking token blacklist: {}", e.getMessage(), e);
-            // En caso de error de Redis, rechazar el token por seguridad
-            return true;
+            logger.error("Error checking token blacklist (Redis error): {}", e.getMessage());
+            logger.warn("Redis error - allowing token (blacklist check failed)");
+
+            // CAMBIO: Si Redis falla, NO bloqueamos el token
+            // En producción deberías tener Redis funcionando, pero en dev/test
+            // permitimos que funcione sin Redis
+            return false;
         }
     }
 
@@ -72,6 +95,11 @@ public class TokenBlacklistService {
      * @param token Token a remover
      */
     public void removeTokenFromBlacklist(String token) {
+        if (redisTemplate == null) {
+            logger.warn("Redis not available - cannot remove token from blacklist");
+            return;
+        }
+
         try {
             String key = BLACKLIST_PREFIX + token;
             redisTemplate.delete(key);

@@ -41,41 +41,52 @@ public class GraphQLSecurityInterceptor implements WebGraphQlInterceptor {
         String operationName = request.getOperationName();
         String document = request.getDocument();
 
-        logger.debug("GraphQL operation: {}, document: {}", operationName, document);
+        logger.debug("=== GraphQL Security Interceptor ===");
+        logger.debug("Operation: {}", operationName);
+        logger.debug("Document: {}", document);
+        logger.debug("Authentication present: {}", authentication != null);
 
-        // Si no hay autenticación y la operación no es login, denegar acceso
-        if (authentication == null || !authentication.isAuthenticated() ||
-            "anonymousUser".equals(authentication.getName())) {
+        if (authentication != null) {
+            logger.debug("Authentication principal: {}", authentication.getPrincipal());
+            logger.debug("Authentication name: {}", authentication.getName());
+            logger.debug("Is authenticated: {}", authentication.isAuthenticated());
+            logger.debug("Authorities: {}", authentication.getAuthorities());
+        }
 
-            // Permitir operaciones de autenticación y registro (case-insensitive)
-            if (document != null) {
-                String docLowerCase = document.toLowerCase();
-                if (docLowerCase.contains("mutation") &&
-                    (docLowerCase.contains("login") ||
-                     docLowerCase.contains("refreshtoken") ||
-                     docLowerCase.contains("registeruser"))) {
-                    logger.debug("Allowing public mutation: login, refreshToken or registerUser");
-                    return chain.next(request);
-                }
-            }
+        // Si hay autenticación válida, permitir la operación
+        if (authentication != null && authentication.isAuthenticated() &&
+            !"anonymousUser".equals(authentication.getName())) {
+            logger.debug("✅ Authenticated user {} - allowing operation", authentication.getName());
+            return chain.next(request);
+        }
 
-            // Permitir introspección SOLO si está habilitada (perfil dev)
-            if (introspectionEnabled && document != null &&
-                (document.contains("IntrospectionQuery") ||
-                 document.contains("__schema") ||
-                 document.contains("__type"))) {
-                logger.debug("Allowing introspection query in development mode");
+        // Si no hay autenticación, solo permitir operaciones públicas
+        logger.debug("⚠️  No authentication found - checking if operation is public");
+
+        if (document != null) {
+            String docLowerCase = document.toLowerCase();
+
+            // Permitir login, register y refresh token sin autenticación
+            if (docLowerCase.contains("mutation") &&
+                (docLowerCase.contains("login") ||
+                 docLowerCase.contains("refreshtoken") ||
+                 docLowerCase.contains("registeruser"))) {
+                logger.debug("✅ Public mutation allowed: login/register/refresh");
                 return chain.next(request);
             }
 
-            logger.warn("Unauthenticated GraphQL request blocked: {}", operationName);
-            return Mono.error(new AccessDeniedException("Autenticación requerida"));
+            // Permitir introspección SOLO si está habilitada (perfil dev)
+            if (introspectionEnabled &&
+                (docLowerCase.contains("introspectionquery") ||
+                 docLowerCase.contains("__schema") ||
+                 docLowerCase.contains("__type"))) {
+                logger.debug("✅ Introspection query allowed in development mode");
+                return chain.next(request);
+            }
         }
 
-        // Log de la operación autenticada
-        logger.info("GraphQL operation '{}' by user: {}", operationName, authentication.getName());
-
-        return chain.next(request);
+        logger.warn("❌ Unauthenticated GraphQL request blocked: {}", operationName);
+        return Mono.error(new AccessDeniedException("Autenticación requerida para esta operación"));
     }
 
     /**
