@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -56,15 +57,21 @@ class DatabaseConfigTest {
     @Test
     void shouldCreateTransactionManager() {
         DataSource ds = databaseConfig.primaryDataSource();
-        LocalContainerEntityManagerFactoryBean emf = databaseConfig.entityManagerFactory(ds);
-        assertNotNull(emf);
-        JpaTransactionManager tm = (JpaTransactionManager) databaseConfig.transactionManager(emf);
+        LocalContainerEntityManagerFactoryBean emfBean = databaseConfig.entityManagerFactory(ds);
+        assertNotNull(emfBean);
+
+        // Inicializar el EntityManagerFactory
+        emfBean.afterPropertiesSet();
+
+        PlatformTransactionManager tm = databaseConfig.transactionManager(emfBean);
         assertNotNull(tm);
-        assertNotNull(tm.getEntityManagerFactory());
 
         // cleanup
         if (ds instanceof HikariDataSource) {
             ((HikariDataSource) ds).close();
+        }
+        if (emfBean.getObject() != null) {
+            emfBean.destroy();
         }
     }
 

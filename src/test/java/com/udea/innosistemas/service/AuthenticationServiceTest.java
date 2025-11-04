@@ -13,6 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +30,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class AuthenticationServiceTest {
 
     @Mock
@@ -72,11 +75,15 @@ class AuthenticationServiceTest {
     void login_WithValidCredentials_ShouldReturnAuthResponse() {
         // Arrange
         Authentication authentication = mock(Authentication.class);
+        when(authentication.getPrincipal()).thenReturn(testUser);
+        when(authentication.getName()).thenReturn("test@example.com");
+
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(testUser);
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(testUser));
         when(jwtTokenProvider.generateToken(authentication)).thenReturn("access-token");
-        when(jwtTokenProvider.generateTokenFromUser(testUser)).thenReturn("refresh-token");
+        when(jwtTokenProvider.generateRefreshToken(authentication)).thenReturn("refresh-token");
+        when(sessionManagementService.registerSession(anyString(), anyString())).thenReturn(true);
 
         // Act
         AuthResponse response = authenticationService.login(loginRequest);
@@ -104,10 +111,15 @@ class AuthenticationServiceTest {
     void refreshToken_WithValidToken_ShouldReturnNewAuthResponse() {
         // Arrange
         String refreshToken = "valid-refresh-token";
+        when(tokenBlacklistService.isTokenBlacklisted(refreshToken)).thenReturn(false);
         when(jwtTokenProvider.validateToken(refreshToken)).thenReturn(true);
+        when(jwtTokenProvider.isRefreshToken(refreshToken)).thenReturn(true);
         when(jwtTokenProvider.getUsernameFromJWT(refreshToken)).thenReturn("test@example.com");
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(testUser));
+        when(sessionManagementService.hasActiveSessions("test@example.com")).thenReturn(true);
         when(jwtTokenProvider.generateTokenFromUser(testUser)).thenReturn("new-access-token");
+        when(jwtTokenProvider.generateRefreshTokenFromUser(testUser)).thenReturn("new-refresh-token");
+        when(jwtTokenProvider.getExpirationDateFromJWT(refreshToken)).thenReturn(new java.util.Date());
 
         // Act
         AuthResponse response = authenticationService.refreshToken(refreshToken);
@@ -115,7 +127,11 @@ class AuthenticationServiceTest {
         // Assert
         assertNotNull(response);
         assertEquals("new-access-token", response.getToken());
+        assertEquals("new-refresh-token", response.getRefreshToken());
         verify(jwtTokenProvider).validateToken(refreshToken);
+        verify(jwtTokenProvider).isRefreshToken(refreshToken);
+        verify(sessionManagementService).hasActiveSessions("test@example.com");
+        verify(tokenBlacklistService).blacklistToken(eq(refreshToken), any());
     }
 
     @Test

@@ -362,3 +362,36 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
+---
+# Test Profile - Para tests unitarios y de integración
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+  h2:
+    console:
+      enabled: true
+  cache:
+    type: simple
+management:
+  health:
+    redis:
+      enabled: false
+    mail:
+      enabled: false
+innosistemas:
+  auth:
+    jwt:
+      secret: test-secret-key-for-testing-only-must-be-at-least-256-bits-long-for-hs384
+      expiration: 3600
+      refresh-expiration: 86400

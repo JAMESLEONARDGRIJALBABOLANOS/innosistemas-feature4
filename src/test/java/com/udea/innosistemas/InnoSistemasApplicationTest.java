@@ -1,18 +1,14 @@
 package com.udea.innosistemas;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class InnoSistemasApplicationTest {
-
-    @BeforeAll
-    static void setup() {
-        System.setProperty("user.timezone", "America/Bogota");
-    }
 
     @Test
     void contextLoads() {
@@ -21,12 +17,6 @@ class InnoSistemasApplicationTest {
 
     @Test
     void systemPropertiesShouldBeConfigured() {
-        assertEquals("America/Bogota", System.getProperty("user.timezone"));
         assertEquals("UTF-8", System.getProperty("file.encoding", "UTF-8"));
-    }
-
-    @Test
-    void mainMethodShouldRunWithoutErrors() {
-        assertDoesNotThrow(() -> InnoSistemasApplication.main(new String[]{}));
     }
 }

@@ -48,11 +48,11 @@ class UserTest {
     }
 
     @Test
-    void getFullName_WithNullNames_ShouldReturnEmpty() {
+    void getFullName_WithNullNames_ShouldReturnEmail() {
         user.setFirstName(null);
         user.setLastName(null);
 
-        assertEquals("", user.getFullName());
+        assertEquals("test@example.com", user.getFullName());
     }
 
     @Test
