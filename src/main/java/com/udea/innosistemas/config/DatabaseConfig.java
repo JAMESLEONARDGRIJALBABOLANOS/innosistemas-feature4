@@ -32,11 +32,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(
-    basePackages = "com.udea.innosistemas.repository",
-    entityManagerFactoryRef = "entityManagerFactory",
-    transactionManagerRef = "transactionManager"
-)
+@EnableJpaRepositories(basePackages = "com.udea.innosistemas.repository")
 public class DatabaseConfig {
 
     private static final Logger log = LoggerFactory.getLogger(DatabaseConfig.class);
@@ -149,10 +145,10 @@ public class DatabaseConfig {
      */
     @Bean
     @Primary
-    public PlatformTransactionManager transactionManager(LocalContainerEntityManagerFactoryBean emf) {
+    public PlatformTransactionManager transactionManager(LocalContainerEntityManagerFactoryBean entityManagerFactoryBean) {
         log.info("Configurando TransactionManager para JPA");
         JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(emf.getObject());
+        transactionManager.setEntityManagerFactory(entityManagerFactoryBean.getObject());
         return transactionManager;
     }
 
