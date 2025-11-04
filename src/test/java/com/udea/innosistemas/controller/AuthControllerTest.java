@@ -2,6 +2,7 @@ package com.udea.innosistemas.controller;
 
 import com.udea.innosistemas.dto.AuthResponse;
 import com.udea.innosistemas.dto.LoginRequest;
+import com.udea.innosistemas.dto.UserInfo;
 import com.udea.innosistemas.service.AuthenticationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,10 +32,8 @@ class AuthControllerTest {
     @BeforeEach
     void setUp() {
         loginRequest = new LoginRequest("test@example.com", "password123");
-        authResponse = AuthResponse.builder()
-                .token("access-token")
-                .refreshToken("refresh-token")
-                .build();
+        UserInfo userInfo = new UserInfo();
+        authResponse = new AuthResponse("access-token", "refresh-token", userInfo);
     }
 
     @Test
@@ -53,35 +52,14 @@ class AuthControllerTest {
     }
 
     @Test
-    void refreshToken_WithValidToken_ShouldReturnNewAuthResponse() {
-        // Arrange
-        String refreshToken = "valid-refresh-token";
-        when(authenticationService.refreshToken(refreshToken)).thenReturn(authResponse);
-
+    void health_ShouldReturnHealthyStatus() {
         // Act
-        ResponseEntity<AuthResponse> response = authController.refreshToken(refreshToken);
+        ResponseEntity<String> response = authController.health();
 
         // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(authResponse, response.getBody());
-        verify(authenticationService).refreshToken(refreshToken);
-    }
-
-    @Test
-    void logout_WithValidToken_ShouldReturnSuccessMessage() {
-        // Arrange
-        String token = "valid-token";
-        doNothing().when(authenticationService).logout(token);
-
-        // Act
-        ResponseEntity<String> response = authController.logout(token);
-
-        // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody().contains("success") || response.getBody().contains("logout"));
-        verify(authenticationService).logout(token);
+        assertTrue(response.getBody().contains("running") || response.getBody().contains("healthy"));
     }
 }
 

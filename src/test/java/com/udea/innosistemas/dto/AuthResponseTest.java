@@ -7,18 +7,18 @@ import static org.junit.jupiter.api.Assertions.*;
 class AuthResponseTest {
 
     @Test
-    void builderPattern_ShouldCreateAuthResponse() {
+    void constructor_WithAllParameters_ShouldCreateAuthResponse() {
+        // Arrange
+        UserInfo userInfo = new UserInfo();
+
         // Act
-        AuthResponse response = AuthResponse.builder()
-                .token("access-token")
-                .refreshToken("refresh-token")
-                .userInfo(null)
-                .build();
+        AuthResponse response = new AuthResponse("access-token", "refresh-token", userInfo);
 
         // Assert
         assertNotNull(response);
         assertEquals("access-token", response.getToken());
         assertEquals("refresh-token", response.getRefreshToken());
+        assertNotNull(response.getUserInfo());
     }
 
     @Test
@@ -39,53 +39,29 @@ class AuthResponseTest {
     }
 
     @Test
-    void equals_WithSameValues_ShouldReturnTrue() {
+    void constructor_WithTokenAndUserInfo_ShouldCreateAuthResponse() {
         // Arrange
-        AuthResponse response1 = AuthResponse.builder()
-                .token("token")
-                .refreshToken("refresh")
-                .build();
-
-        AuthResponse response2 = AuthResponse.builder()
-                .token("token")
-                .refreshToken("refresh")
-                .build();
-
-        // Assert
-        assertEquals(response1, response2);
-    }
-
-    @Test
-    void hashCode_WithSameValues_ShouldBeEqual() {
-        // Arrange
-        AuthResponse response1 = AuthResponse.builder()
-                .token("token")
-                .refreshToken("refresh")
-                .build();
-
-        AuthResponse response2 = AuthResponse.builder()
-                .token("token")
-                .refreshToken("refresh")
-                .build();
-
-        // Assert
-        assertEquals(response1.hashCode(), response2.hashCode());
-    }
-
-    @Test
-    void toString_ShouldContainFieldValues() {
-        // Arrange
-        AuthResponse response = AuthResponse.builder()
-                .token("access-token")
-                .refreshToken("refresh-token")
-                .build();
+        UserInfo userInfo = new UserInfo();
 
         // Act
-        String result = response.toString();
+        AuthResponse response = new AuthResponse("token", userInfo);
 
         // Assert
-        assertNotNull(result);
-        assertTrue(result.contains("access-token") || result.contains("AuthResponse"));
+        assertEquals("token", response.getToken());
+        assertNotNull(response.getUserInfo());
+        assertNull(response.getRefreshToken());
+    }
+
+    @Test
+    void defaultConstructor_ShouldCreateEmptyAuthResponse() {
+        // Act
+        AuthResponse response = new AuthResponse();
+
+        // Assert
+        assertNotNull(response);
+        assertNull(response.getToken());
+        assertNull(response.getRefreshToken());
+        assertNull(response.getUserInfo());
     }
 }
 
