@@ -47,12 +47,16 @@ public class GraphQLSecurityInterceptor implements WebGraphQlInterceptor {
         if (authentication == null || !authentication.isAuthenticated() ||
             "anonymousUser".equals(authentication.getName())) {
 
-            // Permitir operaciones de autenticación y registro
-            if (document != null && (document.contains("mutation login") ||
-                                    document.contains("mutation refreshToken") ||
-                                    document.contains("mutation registerUser") ||
-                                    document.contains("mutation RegisterUser"))) {
-                return chain.next(request);
+            // Permitir operaciones de autenticación y registro (case-insensitive)
+            if (document != null) {
+                String docLowerCase = document.toLowerCase();
+                if (docLowerCase.contains("mutation") &&
+                    (docLowerCase.contains("login") ||
+                     docLowerCase.contains("refreshtoken") ||
+                     docLowerCase.contains("registeruser"))) {
+                    logger.debug("Allowing public mutation: login, refreshToken or registerUser");
+                    return chain.next(request);
+                }
             }
 
             // Permitir introspección SOLO si está habilitada (perfil dev)
