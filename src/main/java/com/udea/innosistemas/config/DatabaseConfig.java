@@ -137,7 +137,6 @@ public class DatabaseConfig {
 
         em.setJpaProperties(hibernateProperties());
 
-        em.afterPropertiesSet();
 
         return em;
     }
