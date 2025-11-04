@@ -287,8 +287,10 @@ management:
 
 logging:
   level:
-    com.udea.innosistemas: INFO
-    org.springframework.security: WARN
+    com.udea.innosistemas: DEBUG
+    com.udea.innosistemas.security: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.graphql: DEBUG
     org.hibernate.SQL: WARN
     org.hibernate.type.descriptor.sql.BasicBinder: WARN
 
@@ -325,9 +327,9 @@ spring:
     activate:
       on-profile: prod
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/postgres}
-    username: ${DATABASE_USERNAME:postgres}
-    password: ${DATABASE_PASSWORD:postgres}
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: ${DB_POOL_SIZE:10}
@@ -336,7 +338,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: ${JPA_DDL_AUTO:update}
-    show-sql: ${JPA_SHOW_SQL:true}
+    show-sql: ${JPA_SHOW_SQL:false}
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
@@ -360,58 +362,3 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
----
-spring:
-  config:
-    activate:
-      on-profile: supabase
-  datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/postgres}
-    username: ${DATABASE_USERNAME:postgres}
-    password: ${DATABASE_PASSWORD:postgres}
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      maximum-pool-size: ${DB_POOL_SIZE:10}
-      minimum-idle: ${DB_MIN_IDLE:2}
-      connection-timeout: 30000
-      idle-timeout: 300000
-      max-lifetime: 1200000
-      validation-timeout: 5000
-  jpa:
-    hibernate:
-      ddl-auto: ${JPA_DDL_AUTO:update}
-    show-sql: ${JPA_SHOW_SQL:true}
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    properties:
-      hibernate:
-        format_sql: true
-        jdbc:
-          time_zone: America/Bogota
-  cache:
-    type: simple
-  graphql:
-    graphiql:
-      enabled: true
-    schema:
-      printer:
-        enabled: true
-      introspection:
-        enabled: true
-
-management:
-  health:
-    redis:
-      enabled: false
-    mail:
-      enabled: false
-
-logging:
-  level:
-    com.udea.innosistemas: INFO
-    org.springframework.security: WARN
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-
-innosistemas:
-  cors:
-    allowed-origins: http://localhost:3000,http://localhost:8080,http://localhost:8081
