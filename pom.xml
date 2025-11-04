@@ -24,9 +24,11 @@
         <sonar.projectKey>JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4</sonar.projectKey>
         <sonar.organization>jamesleonardgrijalbabolanos</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <spring.datasource.url>jdbc:postgresql://localhost:5432/innosistemas</spring.datasource.url>
-        <spring.datasource.username>usuario</spring.datasource.username>
-        <spring.datasource.password>postgres</spring.datasource.password>
+        <spring.datasource.url>jdbc:postgresql://dpg-d44mec75r7bs73b0qam0-a.oregon-postgres.render.com:5432/innosistemas_c4x4
+        </spring.datasource.url>
+        <spring.datasource.username>root</spring.datasource.username>
+        <spring.datasource.password>zo2pFJhXMLq3GRwxJSXd8itt6DGiUaI5
+        </spring.datasource.password>
     </properties>
 
     <dependencies>
@@ -95,11 +97,6 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
         </dependency>
 
         <!-- JWT -->
@@ -266,16 +263,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Flyway plugin -->
-            <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <configuration>
-                    <url>${spring.datasource.url}</url>
-                    <user>${spring.datasource.username}</user>
-                    <password>${spring.datasource.password}</password>
-                </configuration>
-            </plugin>
 
         </plugins>
     </build>

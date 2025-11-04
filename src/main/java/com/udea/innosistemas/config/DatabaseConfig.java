@@ -22,17 +22,17 @@ import java.util.Properties;
 /**
  * Configuración de la base de datos PostgreSQL para InnoSistemas
  * 
- * Esta configuración establece la conexión con la base de datos PostgreSQL
- * utilizando Supabase como servicio de base de datos en la nube, siguiendo
- * los lineamientos establecidos en el documento de arquitectura.
- * 
+ * NOTA: Esta clase está deshabilitada para usar la autoconfiguración de Spring Boot
+ * que lee directamente del application.yml. Esto es más simple y permite que
+ * JPA cree las tablas automáticamente con ddl-auto: update
+ *
  * @author Fábrica-Escuela de Software UdeA
  * @version 1.0.0
  */
 
-@Configuration
-@EnableTransactionManagement
-@EnableJpaRepositories(basePackages = "com.udea.innosistemas.repository")
+//@Configuration
+//@EnableTransactionManagement
+//@EnableJpaRepositories(basePackages = "com.udea.innosistemas.repository")
 public class DatabaseConfig {
 
     private static final Logger log = LoggerFactory.getLogger(DatabaseConfig.class);
