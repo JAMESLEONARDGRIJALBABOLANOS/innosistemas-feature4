@@ -60,16 +60,37 @@ Backend del sistema InnoSistemas que proporciona una API GraphQL para la gestió
 - ✅ CORS configurado
 - ✅ Validación de entrada
 - ✅ Manejo centralizado de excepciones
-
+  
+### Monitoreo y Observabilidad
+- ✅ Actuator endpoints (health, info, metrics, prometheus)
+- ✅ Métricas de Prometheus
+- ✅ Logging estructurado
+  
 ### GraphQL API
 - ✅ Queries: getCurrentUser, getUserPermissions, getTeamMembers
 - ✅ Mutations: login, refreshToken, logout, logoutFromAllDevices
 - ✅ GraphiQL habilitado para pruebas
 
-### Monitoreo y Observabilidad
-- ✅ Actuator endpoints (health, info, metrics, prometheus)
-- ✅ Métricas de Prometheus
-- ✅ Logging estructurado
+### Operaciones GraphQL
+
+A continuación se describen las operaciones actualmente disponibles en el esquema GraphQL del sistema.
+
+#### Queries disponibles
+- **getCurrentUser** → Retorna la información del usuario autenticado.
+- **getUserPermissions** → Muestra los permisos y roles del usuario actual.
+- **getTeamMembers(teamId: ID!)** → Lista los miembros de un equipo determinado (requiere permisos de curso o equipo).
+
+#### Mutations disponibles
+- **login(email, password)** → Inicia sesión y retorna los tokens de autenticación.
+- **refreshToken(refreshToken)** → Genera un nuevo par de tokens de acceso y refresh.
+- **logout(token)** → Cierra la sesión actual e invalida el token usado.
+- **logoutFromAllDevices** → Cierra todas las sesiones activas del usuario autenticado.
+
+> Todas las operaciones autenticadas requieren el encabezado:
+> ```
+> Authorization: Bearer <jwt-token>
+> ```
+
 
 ## Requisitos Previos
 
@@ -260,7 +281,36 @@ query GetTeamMembers {
   }
 }
 ```
+### Tipos principales del esquema
 
+```graphql
+type User {
+  id: ID!
+  email: String!
+  role: Role!
+  firstName: String
+  lastName: String
+  fullName: String
+  teamId: ID
+  courseId: ID
+}
+
+type AuthPayload {
+  token: String!
+  refreshToken: String!
+  userInfo: User!
+}
+
+type UserPermissions {
+  userId: ID!
+  role: Role!
+  permissions: [String!]!
+  teamId: ID
+  courseId: ID
+}
+
+
+```
 ## Estructura del Proyecto
 
 ```
@@ -358,6 +408,15 @@ innosistemas:
 - **X-Frame-Options**: DENY
 - **X-Content-Type-Options**: nosniff
 - **X-XSS-Protection**: 1; mode=block
+```markdown
+### Directivas GraphQL Personalizadas
+
+El esquema GraphQL utiliza directivas propias para control de acceso:
+
+- `@auth` → Requiere autenticación mediante JWT.
+- `@requiresTeam` → Restringe el acceso a los miembros del equipo asociado.
+- `@requiresCourse` → Limita el acceso a usuarios pertenecientes al curso indicado.
+```
 
 ### Configuración JWT
 - **Token de acceso**: 24 horas (86400 segundos)
