@@ -37,14 +37,22 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
      */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // Endpoint principal para GraphQL Subscriptions
+        // Endpoint principal para GraphQL Subscriptions con SockJS
         registry.addEndpoint("/graphql-ws")
-                .setAllowedOriginPatterns("*") // Configurar según necesidades de CORS
+                .setAllowedOriginPatterns(
+                    "http://localhost:*",
+                    "http://127.0.0.1:*",
+                    "https://innosistemas.udea.edu.co"
+                )
                 .withSockJS(); // Fallback a SockJS para navegadores que no soportan WebSocket
 
-        // Endpoint sin SockJS para clientes nativos
+        // Endpoint sin SockJS para clientes nativos WebSocket
         registry.addEndpoint("/graphql-ws")
-                .setAllowedOriginPatterns("*");
+                .setAllowedOriginPatterns(
+                    "http://localhost:*",
+                    "http://127.0.0.1:*",
+                    "https://innosistemas.udea.edu.co"
+                );
     }
 
     /**

@@ -380,22 +380,24 @@ class AuthenticationServiceTest {
 
         // Assert - Puede retornar una respuesta o manejar el null sin excepción
         assertNotNull(response);
-    }
-
-    @Test
     void logout_WithInvalidToken_ShouldHandleGracefully() {
-        // Arrange
-        String invalidToken = "invalid-token";
-        when(jwtTokenProvider.validateToken(invalidToken)).thenReturn(false);
-
         // Act - El servicio maneja token inválido sin lanzar excepción
         LogoutResponse response = authenticationService.logout(invalidToken);
 
         // Assert
         assertNotNull(response);
-    }
+    void logoutFromAllDevices_WithNullUsername_ShouldHandleGracefully() {
+        // Act - El servicio puede manejar null username sin lanzar excepción
+        LogoutResponse response = authenticationService.logoutFromAllDevices(null);
 
-    @Test
+        // Assert
+        assertNotNull(response);
+    void logoutFromAllDevices_WhenUserNotFound_ShouldHandleGracefully() {
+        // Act - El servicio puede manejar usuario no encontrado sin excepción
+        LogoutResponse response = authenticationService.logoutFromAllDevices(username);
+
+        // Assert
+        assertNotNull(response);
     void logout_WithAlreadyBlacklistedToken_ShouldStillSucceed() {
         // Arrange
         String token = "already-blacklisted-token";
@@ -411,25 +413,23 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    void logoutFromAllDevices_WithNullUsername_ShouldHandleGracefully() {
-        // Act - El servicio puede manejar null username sin lanzar excepción
-        LogoutResponse response = authenticationService.logoutFromAllDevices(null);
-
-        // Assert
-        assertNotNull(response);
+    void logoutFromAllDevices_WithNullUsername_ShouldThrowException() {
+        // Act & Assert
+        assertThrows(Exception.class, () ->
+            authenticationService.logoutFromAllDevices(null)
+        );
     }
 
     @Test
-    void logoutFromAllDevices_WhenUserNotFound_ShouldHandleGracefully() {
+    void logoutFromAllDevices_WhenUserNotFound_ShouldThrowException() {
         // Arrange
         String username = "nonexistent@example.com";
         when(userRepository.findByEmail(username)).thenReturn(Optional.empty());
 
-        // Act - El servicio puede manejar usuario no encontrado sin excepción
-        LogoutResponse response = authenticationService.logoutFromAllDevices(username);
-
-        // Assert
-        assertNotNull(response);
+        // Act & Assert
+        assertThrows(Exception.class, () ->
+            authenticationService.logoutFromAllDevices(username)
+        );
     }
 
     @Test

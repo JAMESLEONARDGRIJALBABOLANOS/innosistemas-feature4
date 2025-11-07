@@ -87,6 +87,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         // Endpoints públicos - No requieren autenticación
                         .requestMatchers("/auth/**", "/api/v1/auth/**").permitAll()
+                        // WebSocket endpoints - permitir acceso inicial (autenticación se maneja en el handshake)
+                        .requestMatchers("/graphql-ws/**").permitAll()
                         // GraphQL: permitir acceso pero el JWT filter procesará el token
                         // La autorización real se maneja en GraphQLSecurityInterceptor
                         .requestMatchers("/graphql", "/api/v1/graphql").permitAll()
