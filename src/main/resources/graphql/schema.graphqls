@@ -54,6 +54,49 @@ type Mutation {
     Cierra todas las sesiones activas de un usuario en todos los dispositivos
     """
     logoutFromAllDevices: LogoutResponse!
+
+    """
+    Registra un nuevo usuario en el sistema
+    No requiere autenticación
+    """
+    registerUser(input: RegisterUserInput!): UserInfo!
+}
+
+input RegisterUserInput {
+    """
+    Email del usuario
+    """
+    email: String!
+
+    """
+    Contraseña del usuario (mínimo 8 caracteres)
+    """
+    password: String!
+
+    """
+    Rol del usuario (STUDENT, TEACHER, ADMIN)
+    """
+    role: String!
+
+    """
+    Nombre del usuario
+    """
+    firstName: String!
+
+    """
+    Apellido del usuario
+    """
+    lastName: String!
+
+    """
+    ID del equipo (opcional)
+    """
+    teamId: Int
+
+    """
+    ID del curso (opcional)
+    """
+    courseId: Int
 }
 
 type AuthResponse {

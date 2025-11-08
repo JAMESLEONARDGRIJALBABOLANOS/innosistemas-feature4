@@ -26,9 +26,8 @@ public class Notification {
     @NotNull(message = "El ID del usuario es obligatorio")
     private Long userId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     @NotBlank(message = "El mensaje es obligatorio")
-    @Lob
     private String mensaje;
 
     @Column(nullable = false)

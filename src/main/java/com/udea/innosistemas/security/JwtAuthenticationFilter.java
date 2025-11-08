@@ -44,7 +44,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String jwt = getJwtFromRequest(request);
 
+            logger.debug("=== JWT Authentication Filter ===");
+            logger.debug("Request URI: {}", request.getRequestURI());
+            logger.debug("JWT present: {}", jwt != null);
+
             if (StringUtils.hasText(jwt)) {
+                logger.debug("JWT token (first 50 chars): {}...", jwt.substring(0, Math.min(50, jwt.length())));
+
                 // Verificar que el token no esté en la blacklist
                 if (tokenBlacklistService.isTokenBlacklisted(jwt)) {
                     logger.warn("Attempted to use blacklisted token");
@@ -55,6 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // Validar el token
                 if (tokenProvider.validateToken(jwt)) {
                     String username = tokenProvider.getUsernameFromJWT(jwt);
+                    logger.debug("Token is valid for user: {}", username);
 
                     UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
                     UsernamePasswordAuthenticationToken authentication =
@@ -62,8 +69,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                    logger.debug("User authenticated successfully: {}", username);
+                    logger.debug("✅ User authenticated successfully: {}", username);
+                    logger.debug("Authorities: {}", userDetails.getAuthorities());
+                } else {
+                    logger.warn("❌ JWT token validation failed");
                 }
+            } else {
+                logger.debug("No JWT token found in request");
             }
         } catch (Exception ex) {
             logger.error("Could not set user authentication in security context", ex);
