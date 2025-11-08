@@ -1,0 +1,41 @@
+# Configuración para tests
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    hikari:
+      pool-name: Test-HikariCP
+      maximum-pool-size: 5
+      minimum-idle: 1
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  h2:
+    console:
+      enabled: false
+
+# JWT Configuration para tests
+jwt:
+  secret: testSecretKeyForJWTTokenGenerationMustBeLongEnoughForHS512AlgorithmToWork
+  expiration: 3600000
+  refresh-expiration: 86400000
+
+# Redis Configuration para tests (deshabilitado)
+spring.data.redis:
+  enabled: false
+
+logging:
+  level:
+    com.udea.innosistemas: INFO
+    org.springframework: WARN
+    org.hibernate: WARN
+

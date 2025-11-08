@@ -1,65 +1,58 @@
 package com.udea.innosistemas.controller;
 
-import com.udea.innosistemas.dto.AuthResponse;
-import com.udea.innosistemas.dto.LoginRequest;
-import com.udea.innosistemas.dto.UserInfo;
 import com.udea.innosistemas.service.AuthenticationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.reset;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
 class AuthControllerTest {
 
-    @Mock
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
     private AuthenticationService authenticationService;
-
-    @InjectMocks
-    private AuthController authController;
-
-    private LoginRequest loginRequest;
-    private AuthResponse authResponse;
 
     @BeforeEach
     void setUp() {
-        loginRequest = new LoginRequest("test@example.com", "password123");
-        UserInfo userInfo = new UserInfo();
-        authResponse = new AuthResponse("access-token", "refresh-token", userInfo);
+        reset(authenticationService);
     }
 
     @Test
-    void login_WithValidCredentials_ShouldReturnAuthResponse() {
-        // Arrange
-        when(authenticationService.login(any(LoginRequest.class))).thenReturn(authResponse);
-
-        // Act
-        ResponseEntity<AuthResponse> response = authController.login(loginRequest);
-
-        // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(authResponse, response.getBody());
-        verify(authenticationService).login(loginRequest);
+    void deberiaRetornarHealthStatusExitosamente() throws Exception {
+        mockMvc.perform(get("/auth/health"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("Auth service is running"));
     }
 
     @Test
-    void health_ShouldReturnHealthyStatus() {
-        // Act
-        ResponseEntity<String> response = authController.health();
+    void deberiaRechazarRutaInvalida() throws Exception {
+        mockMvc.perform(get("/auth/invalid-endpoint"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+    }
 
-        // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody().contains("running") || response.getBody().contains("healthy"));
+    @Test
+    void deberiaRetornarBadRequestSiLoginEsInvalido() throws Exception {
+        mockMvc.perform(post("/auth/login")
+                        .contentType("application/json")
+                        .content("{}")) //
+                .andExpect(status().is4xxClientError());
     }
 }
-

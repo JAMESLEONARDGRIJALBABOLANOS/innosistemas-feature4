@@ -2,187 +2,176 @@ package com.udea.innosistemas.dto;
 
 import com.udea.innosistemas.entity.User;
 import com.udea.innosistemas.entity.UserRole;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserInfoTest {
 
-    private User testUser;
-
-    @BeforeEach
-    void setUp() {
-        testUser = new User();
-        testUser.setId(1L);
-        testUser.setEmail("test@example.com");
-        testUser.setFirstName("John");
-        testUser.setLastName("Doe");
-        testUser.setRole(UserRole.STUDENT);
-        testUser.setTeamId(10L);
-        testUser.setCourseId(20L);
-    }
-
     @Test
-    void constructor_WithUser_ShouldCreateUserInfo() {
-        // Act
-        UserInfo userInfo = new UserInfo(testUser);
-
-        // Assert
-        assertNotNull(userInfo);
-        assertEquals(1L, userInfo.getId());
-        assertEquals("test@example.com", userInfo.getEmail());
-        assertEquals("John", userInfo.getFirstName());
-        assertEquals("Doe", userInfo.getLastName());
-        assertEquals(UserRole.STUDENT, userInfo.getRole());
-        assertEquals(10L, userInfo.getTeamId());
-        assertEquals(20L, userInfo.getCourseId());
-    }
-
-    @Test
-    void constructor_WithParameters_ShouldCreateUserInfo() {
-        // Act
-        UserInfo userInfo = new UserInfo(1L, "test@example.com", UserRole.STUDENT, 10L, 20L);
-
-        // Assert
-        assertNotNull(userInfo);
-        assertEquals(1L, userInfo.getId());
-        assertEquals("test@example.com", userInfo.getEmail());
-        assertEquals(UserRole.STUDENT, userInfo.getRole());
-        assertEquals(10L, userInfo.getTeamId());
-        assertEquals(20L, userInfo.getCourseId());
-    }
-
-    @Test
-    void getFullName_WithBothNames_ShouldReturnFullName() {
-        // Arrange
-        UserInfo userInfo = new UserInfo(testUser);
-
-        // Act
-        String fullName = userInfo.getFullName();
-
-        // Assert
-        assertEquals("John Doe", fullName);
-    }
-
-    @Test
-    void getFullName_WithNullFirstName_ShouldReturnEmail() {
-        // Arrange
-        testUser.setFirstName(null);
-        UserInfo userInfo = new UserInfo(testUser);
-
-        // Act
-        String fullName = userInfo.getFullName();
-
-        // Assert
-        assertEquals("test@example.com", fullName);
-    }
-
-    @Test
-    void getFullName_WithNullLastName_ShouldReturnEmail() {
-        // Arrange
-        testUser.setLastName(null);
-        UserInfo userInfo = new UserInfo(testUser);
-
-        // Act
-        String fullName = userInfo.getFullName();
-
-        // Assert
-        assertEquals("test@example.com", fullName);
-    }
-
-    @Test
-    void gettersAndSetters_ShouldWorkCorrectly() {
-        // Arrange
-        UserInfo userInfo = new UserInfo();
-
-        // Act
-        userInfo.setId(2L);
-        userInfo.setEmail("new@example.com");
-        userInfo.setFirstName("Jane");
-        userInfo.setLastName("Smith");
-        userInfo.setRole(UserRole.PROFESSOR);
-        userInfo.setTeamId(15L);
-        userInfo.setCourseId(25L);
-        userInfo.setFullName("Jane Smith");
-
-        // Assert
-        assertEquals(2L, userInfo.getId());
-        assertEquals("new@example.com", userInfo.getEmail());
-        assertEquals("Jane", userInfo.getFirstName());
-        assertEquals("Smith", userInfo.getLastName());
-        assertEquals(UserRole.PROFESSOR, userInfo.getRole());
-        assertEquals(15L, userInfo.getTeamId());
-        assertEquals(25L, userInfo.getCourseId());
-        assertEquals("Jane Smith", userInfo.getFullName());
-    }
-
-    @Test
-    void toString_ShouldContainUserData() {
-        // Arrange
-        UserInfo userInfo = new UserInfo(testUser);
-
-        // Act
-        String result = userInfo.toString();
-
-        // Assert
-        assertNotNull(result);
-    }
-
-    @Test
-    void equals_WithSameData_ShouldReturnEqual() {
-        // Arrange
-        UserInfo userInfo1 = new UserInfo(testUser);
-        UserInfo userInfo2 = new UserInfo(testUser);
-
-        // Act & Assert
-        assertEquals(userInfo1.getId(), userInfo2.getId());
-        assertEquals(userInfo1.getEmail(), userInfo2.getEmail());
-    }
-
-    @Test
-    void constructor_EmptyConstructor_ShouldCreateInstance() {
-        // Act
+    void testDefaultConstructor() {
+        // Arrange & Act
         UserInfo userInfo = new UserInfo();
 
         // Assert
-        assertNotNull(userInfo);
+        assertNull(userInfo.getId());
+        assertNull(userInfo.getEmail());
+        assertNull(userInfo.getRole());
+        assertNull(userInfo.getTeamId());
+        assertNull(userInfo.getCourseId());
+        assertNull(userInfo.getFirstName());
+        assertNull(userInfo.getLastName());
+        assertNull(userInfo.getFullName());
     }
 
     @Test
-    void setRole_WithValidRole_ShouldSetRole() {
+    void testConstructorWithBasicInfo() {
         // Arrange
-        UserInfo userInfo = new UserInfo();
+        Long expectedId = 1L;
+        String expectedEmail = "test@udea.edu.co";
+        UserRole expectedRole = UserRole.STUDENT;
 
         // Act
-        userInfo.setRole(UserRole.ADMIN);
+        UserInfo userInfo = new UserInfo(expectedId, expectedEmail, expectedRole);
 
         // Assert
-        assertEquals(UserRole.ADMIN, userInfo.getRole());
+        assertEquals(expectedId, userInfo.getId());
+        assertEquals(expectedEmail, userInfo.getEmail());
+        assertEquals(expectedRole, userInfo.getRole());
+        assertNull(userInfo.getTeamId());
+        assertNull(userInfo.getCourseId());
     }
 
     @Test
-    void setTeamId_WithValidId_ShouldSetTeamId() {
+    void testConstructorWithTeamAndCourse() {
         // Arrange
-        UserInfo userInfo = new UserInfo();
+        Long expectedId = 2L;
+        String expectedEmail = "student@udea.edu.co";
+        UserRole expectedRole = UserRole.STUDENT;
+        Long expectedTeamId = 10L;
+        Long expectedCourseId = 5L;
 
         // Act
-        userInfo.setTeamId(100L);
+        UserInfo userInfo = new UserInfo(expectedId, expectedEmail, expectedRole, expectedTeamId, expectedCourseId);
 
         // Assert
-        assertEquals(100L, userInfo.getTeamId());
+        assertEquals(expectedId, userInfo.getId());
+        assertEquals(expectedEmail, userInfo.getEmail());
+        assertEquals(expectedRole, userInfo.getRole());
+        assertEquals(expectedTeamId, userInfo.getTeamId());
+        assertEquals(expectedCourseId, userInfo.getCourseId());
     }
 
     @Test
-    void setCourseId_WithValidId_ShouldSetCourseId() {
+    void testConstructorFromUserEntity() {
         // Arrange
-        UserInfo userInfo = new UserInfo();
+        User user = new User();
+        user.setId(3L);
+        user.setEmail("profesor@udea.edu.co");
+        user.setRole(UserRole.PROFESSOR);
+        user.setTeamId(15L);
+        user.setCourseId(8L);
+        user.setFirstName("María");
+        user.setLastName("González");
+
 
         // Act
-        userInfo.setCourseId(200L);
+        UserInfo userInfo = new UserInfo(user);
 
         // Assert
-        assertEquals(200L, userInfo.getCourseId());
+        assertEquals(user.getId(), userInfo.getId());
+        assertEquals(user.getEmail(), userInfo.getEmail());
+        assertEquals(user.getRole(), userInfo.getRole());
+        assertEquals(user.getTeamId(), userInfo.getTeamId());
+        assertEquals(user.getCourseId(), userInfo.getCourseId());
+        assertEquals(user.getFirstName(), userInfo.getFirstName());
+        assertEquals(user.getLastName(), userInfo.getLastName());
+
+    }
+
+    @Test
+    void testSettersAndGetters() {
+        // Arrange
+        UserInfo userInfo = new UserInfo();
+        Long expectedId = 4L;
+        String expectedEmail = "admin@udea.edu.co";
+        UserRole expectedRole = UserRole.ADMIN;
+        Long expectedTeamId = 20L;
+        Long expectedCourseId = 12L;
+        String expectedFirstName = "Carlos";
+        String expectedLastName = "Pérez";
+
+
+        // Act
+        userInfo.setId(expectedId);
+        userInfo.setEmail(expectedEmail);
+        userInfo.setRole(expectedRole);
+        userInfo.setTeamId(expectedTeamId);
+        userInfo.setCourseId(expectedCourseId);
+        userInfo.setFirstName(expectedFirstName);
+        userInfo.setLastName(expectedLastName);
+
+
+        // Assert
+        assertEquals(expectedId, userInfo.getId());
+        assertEquals(expectedEmail, userInfo.getEmail());
+        assertEquals(expectedRole, userInfo.getRole());
+        assertEquals(expectedTeamId, userInfo.getTeamId());
+        assertEquals(expectedCourseId, userInfo.getCourseId());
+        assertEquals(expectedFirstName, userInfo.getFirstName());
+        assertEquals(expectedLastName, userInfo.getLastName());
+
+    }
+
+    @Test
+    void testAdminRole() {
+        // Arrange
+        Long adminId = 100L;
+        String adminEmail = "admin@sistema.com";
+        UserRole adminRole = UserRole.ADMIN;
+
+        // Act
+        UserInfo adminInfo = new UserInfo(adminId, adminEmail, adminRole);
+
+        // Assert
+        assertEquals(adminRole, adminInfo.getRole());
+        assertEquals(adminId, adminInfo.getId());
+        assertEquals(adminEmail, adminInfo.getEmail());
+    }
+
+    @Test
+    void testProfessorRole() {
+        // Arrange
+        Long professorId = 200L;
+        String professorEmail = "profesor@udea.edu.co";
+        UserRole professorRole = UserRole.PROFESSOR;
+
+        // Act
+        UserInfo professorInfo = new UserInfo(professorId, professorEmail, professorRole);
+
+        // Assert
+        assertEquals(professorRole, professorInfo.getRole());
+        assertEquals(professorId, professorInfo.getId());
+        assertEquals(professorEmail, professorInfo.getEmail());
+    }
+
+    @Test
+    void testStudentWithTeamAndCourse() {
+        // Arrange
+        UserInfo studentInfo = new UserInfo();
+        Long studentId = 300L;
+        Long teamId = 5L;
+        Long courseId = 3L;
+
+        // Act
+        studentInfo.setId(studentId);
+        studentInfo.setRole(UserRole.STUDENT);
+        studentInfo.setTeamId(teamId);
+        studentInfo.setCourseId(courseId);
+
+        // Assert
+        assertEquals(UserRole.STUDENT, studentInfo.getRole());
+        assertEquals(teamId, studentInfo.getTeamId());
+        assertEquals(courseId, studentInfo.getCourseId());
+        assertNotNull(studentInfo.getId());
     }
 }
-

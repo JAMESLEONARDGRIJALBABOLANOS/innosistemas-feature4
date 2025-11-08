@@ -128,7 +128,7 @@ class SecurityConfigTest {
         cfg.setMaxAge(3600L);
         cfg.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:8080"));
         cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        cfg.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "Origin"));
+        cfg.setAllowedHeaders(List.of("*")); // Allow all headers as per actual SecurityConfig
         return cfg;
     }
 
@@ -169,8 +169,8 @@ class SecurityConfigTest {
         assertNotNull(config);
         List<String> headers = config.getAllowedHeaders();
         assertNotNull(headers);
-        // En el perfil de test se usa "*" para todos los headers
-        assertTrue(headers.contains("*") || headers.contains("Authorization"));
+        // La configuración permite todos los headers con "*"
+        assertTrue(headers.contains("*"), "Should allow all headers with '*'");
     }
 
     // 🔟 Test: verificar credenciales y max-age
