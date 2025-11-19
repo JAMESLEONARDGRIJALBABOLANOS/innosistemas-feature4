@@ -3,8 +3,11 @@ package com.udea.innosistemas.resolver;
 import com.udea.innosistemas.dto.AuthResponse;
 import com.udea.innosistemas.dto.LoginRequest;
 import com.udea.innosistemas.dto.LogoutResponse;
+import com.udea.innosistemas.dto.RegisterUserInput;
+import com.udea.innosistemas.dto.UserInfo;
 import com.udea.innosistemas.security.JwtTokenProvider;
 import com.udea.innosistemas.service.AuthenticationService;
+import com.udea.innosistemas.service.UserRegistrationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -35,6 +38,9 @@ public class AuthMutationResolver {
     private AuthenticationService authenticationService;
 
     @Autowired
+    private UserRegistrationService userRegistrationService;
+
+    @Autowired
     private JwtTokenProvider tokenProvider;
 
     @Autowired(required = false)
@@ -54,6 +60,18 @@ public class AuthMutationResolver {
             @Argument @Valid @NotBlank String password) {
         LoginRequest loginRequest = new LoginRequest(email, password);
         return authenticationService.login(loginRequest);
+    }
+
+    /**
+     * Mutation para registrar un nuevo usuario
+     *
+     * @param input Datos del usuario a registrar
+     * @return UserInfo con la información del usuario creado
+     */
+    @MutationMapping
+    @PreAuthorize("permitAll()")
+    public UserInfo registerUser(@Argument @Valid RegisterUserInput input) {
+        return userRegistrationService.registerUser(input);
     }
 
     /**

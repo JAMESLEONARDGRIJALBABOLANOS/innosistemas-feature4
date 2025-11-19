@@ -1,0 +1,72 @@
+# ============================================
+# .dockerignore para InnoSistemas Backend
+# Excluye archivos innecesarios del contexto de Docker
+# ============================================
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+.metadata/
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docker
+dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation
+*.md
+README.md
+API_DOCUMENTATION.md
+EJEMPLOS_POSTMAN_LISTOS.md
+GRAPHQL_DIRECTO_POSTMAN.md
+POSTMAN_USER_REGISTRATION_GUIDE.md
+REGISTRO_USUARIOS_RESUMEN.md
+USUARIO_DEMO_GUIDE.md
+WEBSOCKET_GUIDE.md
+
+# Scripts
+*.bat
+*.sh
+
+# Tests
+src/test/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
