@@ -35,6 +35,10 @@ type Query {
 }
 
 type Mutation {
+    # ==========================================
+    # AUTENTICACIÓN
+    # ==========================================
+
     """
     Autentica un usuario y devuelve tokens de acceso y refresh
     """
@@ -60,6 +64,52 @@ type Mutation {
     No requiere autenticación
     """
     registerUser(input: RegisterUserInput!): UserInfo!
+
+    # ==========================================
+    # GESTIÓN DE EQUIPOS
+    # ==========================================
+
+    """
+    Crea un nuevo equipo
+    Requiere: Rol PROFESSOR o ADMIN
+    """
+    createTeam(input: TeamInput!): TeamDTO! @auth
+
+    """
+    Actualiza un equipo existente
+    Requiere: Rol PROFESSOR o ADMIN
+    """
+    updateTeam(id: ID!, input: TeamUpdateInput!): TeamDTO! @auth
+
+    """
+    Actualiza la fecha límite de un equipo
+    Requiere: Rol PROFESSOR o ADMIN
+    """
+    updateTeamDeadline(teamId: ID!, deadline: String!): TeamDTO! @auth
+
+    """
+    Invita a un usuario a unirse a un equipo
+    Requiere: Rol PROFESSOR, ADMIN o TA
+    """
+    inviteUserToTeam(teamId: ID!, userId: ID!): InvitationResponse! @auth
+
+    """
+    El usuario actual se une a un equipo
+    Requiere: Autenticación
+    """
+    joinTeam(teamId: ID!): TeamDTO! @auth
+
+    """
+    El usuario actual abandona su equipo
+    Requiere: Autenticación
+    """
+    leaveTeam(teamId: ID!): LeaveTeamResponse! @auth
+
+    """
+    Elimina un equipo (lo marca como inactivo)
+    Requiere: Rol PROFESSOR o ADMIN
+    """
+    deleteTeam(id: ID!): DeleteTeamResponse! @auth
 }
 
 input RegisterUserInput {
@@ -279,4 +329,145 @@ type TeamMember {
     ID del curso
     """
     courseId: ID
+}
+
+# ==========================================
+# TIPOS PARA GESTIÓN DE EQUIPOS
+# ==========================================
+
+type TeamDTO {
+    """
+    ID del equipo
+    """
+    id: ID!
+
+    """
+    Nombre del equipo
+    """
+    nombre: String!
+
+    """
+    Descripción del equipo
+    """
+    descripcion: String
+
+    """
+    Fecha límite del equipo (ISO 8601)
+    """
+    fechaLimite: String
+
+    """
+    Indica si el equipo está activo
+    """
+    activo: Boolean!
+
+    """
+    Número máximo de miembros permitidos
+    """
+    maxMiembros: Int
+
+    """
+    ID del curso al que pertenece el equipo
+    """
+    courseId: ID!
+
+    """
+    Lista de miembros del equipo
+    """
+    miembros: [TeamMember!]!
+}
+
+input TeamInput {
+    """
+    Nombre del equipo
+    """
+    nombre: String!
+
+    """
+    Descripción del equipo
+    """
+    descripcion: String
+
+    """
+    Fecha límite (formato ISO 8601: 2024-12-31T23:59:59)
+    """
+    fechaLimite: String
+
+    """
+    ID del curso
+    """
+    courseId: ID!
+
+    """
+    Número máximo de miembros (por defecto: 3)
+    """
+    maxMiembros: Int
+}
+
+input TeamUpdateInput {
+    """
+    Nuevo nombre del equipo
+    """
+    nombre: String
+
+    """
+    Nueva descripción
+    """
+    descripcion: String
+
+    """
+    Nueva fecha límite (formato ISO 8601)
+    """
+    fechaLimite: String
+
+    """
+    Cambiar estado activo/inactivo
+    """
+    activo: Boolean
+
+    """
+    Actualizar número máximo de miembros
+    """
+    maxMiembros: Int
+}
+
+type InvitationResponse {
+    """
+    Indica si la invitación fue exitosa
+    """
+    success: Boolean!
+
+    """
+    Mensaje descriptivo
+    """
+    message: String!
+
+    """
+    ID de la notificación de invitación (si se creó)
+    """
+    notificationId: ID
+}
+
+type LeaveTeamResponse {
+    """
+    Indica si salió exitosamente del equipo
+    """
+    success: Boolean!
+
+    """
+    Mensaje descriptivo
+    """
+    message: String!
+}
+
+type DeleteTeamResponse {
+    """
+    Indica si la eliminación fue exitosa
+    """
+    success: Boolean!
+
+    """
+    Mensaje descriptivo
+    """
+    message: String!
 }

@@ -25,12 +25,9 @@
         <sonar.projectKey>MiguelSernaMon_innosistemas-feature4-backend</sonar.projectKey>
         <sonar.organization>miguelsernamon</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <!-- Database Configuration (use environment variables in production) -->
-        <spring.datasource.url>jdbc:postgresql://dpg-d44mec75r7bs73b0qam0-a.oregon-postgres.render.com:5432/innosistemas_c4x4
-        </spring.datasource.url>
-        <spring.datasource.username>root</spring.datasource.username>
-        <spring.datasource.password>zo2pFJhXMLq3GRwxJSXd8itt6DGiUaI5
-        </spring.datasource.password>
+        <!-- Database Configuration - These properties are now configured via environment variables -->
+        <!-- For local development, set these in your IDE or .env file -->
+        <!-- For production, configure in Render dashboard under Environment Variables -->
     </properties>
 
     <dependencies>

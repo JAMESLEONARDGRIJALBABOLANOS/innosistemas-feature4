@@ -2,7 +2,7 @@
 
 Esta guía explica cómo usar las subscripciones GraphQL en tiempo real con WebSocket en el proyecto InnoSistemas.
 
-## 📋 Tabla de Contenidos
+## Tabla de Contenidos
 
 1. [Configuración](#configuración)
 2. [Endpoints WebSocket](#endpoints-websocket)
@@ -13,7 +13,7 @@ Esta guía explica cómo usar las subscripciones GraphQL en tiempo real con WebS
 
 ---
 
-## 🔧 Configuración
+## Configuración
 
 ### Endpoints WebSocket
 
@@ -35,7 +35,7 @@ spring:
 
 ---
 
-## 🔐 Autenticación
+## Autenticación
 
 Las conexiones WebSocket requieren autenticación JWT. Hay tres formas de proporcionar el token:
 
@@ -69,7 +69,7 @@ const socket = new SockJS('http://localhost:8080/api/v1/graphql-ws?token=' + jwt
 
 ---
 
-## 📡 Subscripciones Disponibles
+## Subscripciones Disponibles
 
 ### 1. onNotificationReceived
 
@@ -126,7 +126,7 @@ subscription {
 
 ---
 
-## 💻 Ejemplos de Uso
+## Ejemplos de Uso
 
 ### JavaScript/TypeScript con graphql-ws
 
@@ -327,7 +327,7 @@ async for result in client.subscribe(subscription):
 
 ---
 
-## 🔍 Testing con GraphiQL/Altair
+## Testing con GraphiQL/Altair
 
 ### Altair GraphQL Client
 
@@ -376,7 +376,7 @@ async for result in client.subscribe(subscription):
 
 ---
 
-## 🛡️ Seguridad
+## Seguridad
 
 ### Headers de Seguridad
 
@@ -407,7 +407,7 @@ El interceptor de autenticación valida el token JWT antes de establecer la cone
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Error: "Connection refused"
 
@@ -434,7 +434,7 @@ El interceptor de autenticación valida el token JWT antes de establecer la cone
 
 ---
 
-## 📚 Referencias
+## Referencias
 
 - [GraphQL over WebSocket Protocol](https://github.com/enisdenjo/graphql-ws/blob/master/PROTOCOL.md)
 - [Spring GraphQL WebSocket](https://docs.spring.io/spring-graphql/docs/current/reference/html/#web.websocket)

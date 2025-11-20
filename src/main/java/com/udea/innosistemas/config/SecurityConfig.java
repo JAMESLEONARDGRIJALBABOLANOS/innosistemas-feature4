@@ -86,7 +86,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
                         // Endpoints públicos - No requieren autenticación
-                        .requestMatchers("/auth/**", "/api/v1/auth/**").permitAll()
+                        // REST auth endpoints eliminados - ahora solo GraphQL
                         // WebSocket endpoints - permitir acceso inicial (autenticación se maneja en el handshake)
                         .requestMatchers("/graphql-ws/**").permitAll()
                         // GraphQL: permitir acceso pero el JWT filter procesará el token

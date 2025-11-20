@@ -1,482 +1,279 @@
-# InnoSistemas Backend - API GraphQL
+# InnoSistemas Backend
 
-[![CI/CD Pipeline](https://github.com/JPablo0505/innosistemas-feature4-main/actions/workflows/build.yml/badge.svg)](https://github.com/JPablo0505/innosistemas-feature4-main/actions/workflows/build.yml) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4)[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4&metric=bugs)](https://sonarcloud.io/summary/new_code?id=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4)[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4)[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4&metric=coverage)](https://sonarcloud.io/summary/new_code?id=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4)[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4)[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4)[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4)[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4)[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4)
+[![CI/CD Pipeline](https://github.com/JPablo0505/innosistemas-feature4-main/actions/workflows/build.yml/badge.svg)](https://github.com/JPablo0505/innosistemas-feature4-main/actions/workflows/build.yml) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4&metric=bugs)](https://sonarcloud.io/summary/new_code?id=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4&metric=coverage)](https://sonarcloud.io/summary/new_code?id=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4) [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4) [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=JAMESLEONARDGRIJALBABOLANOS_innosistemas-feature4)
 
-
-Plataforma de Integración y Desarrollo de Software para Estudiantes de Ingeniería de Sistemas - Universidad de Antioquia
-
-## Descripción
-
-Backend del sistema InnoSistemas que proporciona una API GraphQL para la gestión de usuarios, autenticación, autorización basada en roles, equipos y cursos. Este proyecto implementa las funcionalidades principales de autenticación y seguridad con JWT, control de acceso basado en roles y directivas GraphQL personalizadas.
+Backend GraphQL para gestión de equipos, autenticación y notificaciones en tiempo real para la Universidad de Antioquia.
 
 ## Stack Tecnológico
 
-### Backend
-- **Framework**: Spring Boot 3.2.0
-- **Java**: 17
-- **API**: GraphQL (Spring for GraphQL)
-- **Base de datos**: PostgreSQL (producción) / H2 (desarrollo y pruebas)
-- **Seguridad**: Spring Security + JWT (JJWT 0.12.3)
-- **Caché**: Redis (opcional, configuración incluida)
-- **Migraciones**: Flyway
-- **Build Tool**: Maven
-- **ORM**: Hibernate/JPA
+- Java 17 + Spring Boot 3.2.0
+- GraphQL API (Spring for GraphQL)
+- Spring Security + JWT
+- PostgreSQL (prod) / H2 (dev)
+- WebSocket subscriptions
+- Redis (opcional)
 
-### Dependencias Principales
-- Spring Boot Starter Web
-- Spring Boot Starter Data JPA
-- Spring Boot Starter Security
-- Spring Boot Starter GraphQL
-- Spring Boot Starter Validation
-- Spring Boot Starter Actuator (monitoreo)
-- Spring Boot Starter Cache
-- Spring Boot Starter Mail
-- Spring Boot Starter Data Redis
-- PostgreSQL Driver
-- Flyway Core
-- JWT (jjwt-api, jjwt-impl, jjwt-jackson)
-- Bucket4j (rate limiting)
-- Prometheus (métricas)
-- Lombok
+## Quick Start
 
-## Características Implementadas
+### Requisitos
 
-### Autenticación y Autorización
-- ✅ Autenticación JWT con tokens de acceso y refresh
-- ✅ Gestión de sesiones de usuario
-- ✅ Blacklist de tokens para logout
-- ✅ Control de acceso basado en roles (RBAC)
-- ✅ Directivas GraphQL personalizadas (@auth, @requiresTeam, @requiresCourse)
+- Java 17+
+- Maven 3.6+
+- PostgreSQL 12+ (producción)
 
-### Roles de Usuario
-- **STUDENT**: Usuario estándar con acceso a sus equipos y proyectos
-- **PROFESSOR**: Puede gestionar cursos, equipos y enviar notificaciones
-- **ADMIN**: Acceso completo al sistema
-- **TA**: Asistente de enseñanza con permisos limitados
-
-### Seguridad
-- ✅ Rate Limiting (limitación de tasa de peticiones)
-- ✅ Security Headers (CSP, HSTS, X-Frame-Options)
-- ✅ CORS configurado
-- ✅ Validación de entrada
-- ✅ Manejo centralizado de excepciones
-  
-### Monitoreo y Observabilidad
-- ✅ Actuator endpoints (health, info, metrics, prometheus)
-- ✅ Métricas de Prometheus
-- ✅ Logging estructurado
-  
-### GraphQL API
-- ✅ Queries: getCurrentUser, getUserPermissions, getTeamMembers
-- ✅ Mutations: login, refreshToken, logout, logoutFromAllDevices
-- ✅ GraphiQL habilitado para pruebas
-
-### Operaciones GraphQL
-
-A continuación se describen las operaciones actualmente disponibles en el esquema GraphQL del sistema.
-
-#### Queries disponibles
-- **getCurrentUser** → Retorna la información del usuario autenticado.
-- **getUserPermissions** → Muestra los permisos y roles del usuario actual.
-- **getTeamMembers(teamId: ID!)** → Lista los miembros de un equipo determinado (requiere permisos de curso o equipo).
-
-#### Mutations disponibles
-- **login(email, password)** → Inicia sesión y retorna los tokens de autenticación.
-- **refreshToken(refreshToken)** → Genera un nuevo par de tokens de acceso y refresh.
-- **logout(token)** → Cierra la sesión actual e invalida el token usado.
-- **logoutFromAllDevices** → Cierra todas las sesiones activas del usuario autenticado.
-
-> Todas las operaciones autenticadas requieren el encabezado:
-> ```
-> Authorization: Bearer <jwt-token>
-> ```
-
-
-## Requisitos Previos
-
-- **Java 17** (JDK 17 o superior)
-- **Maven 3.6+**
-- **PostgreSQL 12+** (para producción)
-- **Redis** (opcional, para caché distribuido y rate limiting)
-
-## Instalación y Configuración
-
-### 1. Clonar el repositorio
+### Instalación
 
 ```bash
+# Clonar repositorio
 git clone <repository-url>
 cd innosistemas-feature4
-```
 
-
-
-### 3. Crear base de datos
-
-```bash
-# Conectar a PostgreSQL
-psql -U postgres
-
-# Crear base de datos
-CREATE DATABASE innosistemas;
-```
-
-### 4. Compilar el proyecto
-
-```bash
+# Compilar
 mvn clean install
+
+# Ejecutar en desarrollo (H2 en memoria)
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-### 5. Ejecutar migraciones de base de datos
+### Configuración de Variables de Entorno
+
+Crear archivo `.env` o configurar variables de sistema:
 
 ```bash
-mvn flyway:migrate
+# Base de datos (producción)
+DB_URL=jdbc:postgresql://localhost:5432/innosistemas
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+
+# JWT
+JWT_SECRET=your-256-bit-secret-key-here
+
+# Redis (opcional)
+REDIS_HOST=localhost
+REDIS_PORT=6379
 ```
 
-### 6. Ejecutar la aplicación
+Ver `docs/DEPLOY.md` para configuración completa.
 
-#### Modo desarrollo (con H2 en memoria):
+### Endpoints
+
+```
+GraphQL API:    http://localhost:8080/api/v1/graphql
+GraphiQL IDE:   http://localhost:8080/api/v1/graphiql
+Health Check:   http://localhost:8080/api/v1/actuator/health
+H2 Console:     http://localhost:8080/api/v1/h2-console (dev only)
+```
+
+### Ejemplo de Uso
+
+```graphql
+# Login
+mutation {
+  login(email: "user@example.com", password: "password123") {
+    token
+    refreshToken
+    userInfo {
+      id
+      email
+      role
+    }
+  }
+}
+
+# Query autenticada (agregar header: Authorization: Bearer <token>)
+query {
+  getCurrentUser {
+    id
+    email
+    fullName
+    role
+  }
+}
+```
+
+## Documentación
+
+### Esenciales
+
+- **[docs/ESTADO_DEL_PROYECTO.md](docs/ESTADO_DEL_PROYECTO.md)** - Arquitectura completa y estado del proyecto
+- **[docs/API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md)** - Referencia completa de la API GraphQL
+- **[docs/DEPLOY.md](docs/DEPLOY.md)** - Despliegue y configuración de producción
+
+### Guías Técnicas
+
+- **[docs/WEBSOCKET_GUIDE.md](docs/WEBSOCKET_GUIDE.md)** - WebSocket y subscriptions en tiempo real
+- **[docs/TESTING_ACCEPTANCE_CRITERIA.md](docs/TESTING_ACCEPTANCE_CRITERIA.md)** - Tests y criterios de aceptación
+- **[docs/GATEWAY_MIGRATION.md](docs/GATEWAY_MIGRATION.md)** - Migración futura a API Gateway
+
+### Changelog
+
+- **[CHANGELOG.md](CHANGELOG.md)** - Historial de versiones y cambios
+
+## Características Principales
+
+### Autenticación
+
+- JWT con tokens de acceso (24h) y refresh (7 días)
+- Logout con blacklist de tokens
+- Gestión de sesiones multi-dispositivo
+
+### Autorización
+
+- Control basado en roles: STUDENT, PROFESSOR, ADMIN, TA
+- Directivas GraphQL personalizadas: `@auth`, `@requiresTeam`, `@requiresCourse`
+- Permisos granulares por operación
+
+### API GraphQL
+
+**Queries:**
+- `getCurrentUser` - Info del usuario autenticado
+- `getUserPermissions` - Permisos del usuario
+- `getTeamMembers` - Miembros de un equipo
+
+**Mutations:**
+- `login`, `logout`, `refreshToken` - Autenticación
+- `registerUser` - Registro de usuarios
+- `createTeam`, `joinTeam`, `leaveTeam` - Gestión de equipos
+- `inviteUserToTeam`, `deleteTeam` - Operaciones de equipo
+
+**Subscriptions:**
+- `onNotificationReceived` - Notificaciones en tiempo real
+- `onTeamEvent` - Eventos de equipo (WebSocket)
+
+### Seguridad
+
+- Rate limiting: 100 req/min (normal), 10 req/min (auth)
+- Security headers: CSP, HSTS, X-Frame-Options
+- CORS configurado
+- Validación de entrada con Bean Validation
+
+### Monitoreo
+
+- Spring Boot Actuator
+- Métricas de Prometheus
+- Health checks
+- Logging estructurado
+
+## Estructura del Proyecto
+
+```
+src/main/java/com/udea/innosistemas/
+├── config/          # Configuración (Security, GraphQL, Redis)
+├── dto/             # Data Transfer Objects
+├── entity/          # Entidades JPA
+├── repository/      # Repositorios Spring Data
+├── resolver/        # GraphQL Resolvers
+├── security/        # JWT, Filters, Directivas
+├── service/         # Lógica de negocio
+└── exception/       # Manejo de errores
+
+src/main/resources/
+├── application.yml  # Configuración principal
+├── graphql/
+│   └── schema.graphqls  # Schema GraphQL
+└── db/migration/    # Scripts Flyway
+```
+
+## Perfiles de Configuración
+
+### Development (`dev`)
+
 ```bash
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-#### Modo producción (con PostgreSQL):
-```bash
-mvn spring-boot:run -Dspring-boot.run.profiles=prod
-```
-
-#### Alternativa - JAR ejecutable:
-```bash
-# Compilar
-mvn clean package
-
-# Ejecutar
-java -jar target/innosistemas-1.0.0.jar
-```
-
-## Endpoints de la API
-
-### Base URL
-```
-http://localhost:8080/api/v1
-```
-
-**IMPORTANTE:** La aplicación usa el context-path `/api/v1`, todas las URLs deben incluirlo.
-
-### GraphQL
-- **GraphQL Endpoint**: `http://localhost:8080/api/v1/graphql`
-- **GraphiQL Interface**: `http://localhost:8080/api/v1/graphiql`
-
-### Base de datos (Desarrollo)
-- **H2 Console**: `http://localhost:8080/api/v1/h2-console`
-
-### Actuator (Monitoreo)
-- **Health**: `http://localhost:8080/api/v1/actuator/health`
-- **Info**: `http://localhost:8080/api/v1/actuator/info`
-- **Metrics**: `http://localhost:8080/api/v1/actuator/metrics` (requiere ADMIN)
-- **Prometheus**: `http://localhost:8080/api/v1/actuator/prometheus` (requiere ADMIN)
-
-## Ejemplos de Uso GraphQL
-
-### Login (Mutation)
-
-```graphql
-mutation Login {
-  login(email: "estudiante@udea.edu.co", password: "password123") {
-    token
-    refreshToken
-    userInfo {
-      id
-      email
-      role
-      firstName
-      lastName
-      fullName
-      teamId
-      courseId
-    }
-  }
-}
-```
-
-### Obtener Usuario Actual (Query con autenticación)
-
-```graphql
-query GetCurrentUser {
-  getCurrentUser {
-    id
-    email
-    role
-    firstName
-    lastName
-    fullName
-    teamId
-    courseId
-  }
-}
-```
-
-**Headers requeridos:**
-```
-Authorization: Bearer <your-jwt-token>
-```
-
-### Obtener Permisos de Usuario (Query con autenticación)
-
-```graphql
-query GetUserPermissions {
-  getUserPermissions {
-    userId
-    role
-    permissions
-    teamId
-    courseId
-    canManageTeam
-    canManageCourse
-    canViewAllTeams
-    canSendNotifications
-  }
-}
-```
-
-### Refresh Token (Mutation)
-
-```graphql
-mutation RefreshToken {
-  refreshToken(refreshToken: "<your-refresh-token>") {
-    token
-    refreshToken
-    userInfo {
-      id
-      email
-      role
-    }
-  }
-}
-```
-
-### Logout (Mutation con autenticación)
-
-```graphql
-mutation Logout {
-  logout(token: "<your-current-token>") {
-    success
-    message
-  }
-}
-```
-
-### Obtener Miembros de Equipo (Query con autenticación y permisos)
-
-```graphql
-query GetTeamMembers {
-  getTeamMembers(teamId: "1") {
-    id
-    email
-    firstName
-    lastName
-    fullName
-    role
-    teamId
-    courseId
-  }
-}
-```
-### Tipos principales del esquema
-
-```graphql
-type User {
-  id: ID!
-  email: String!
-  role: Role!
-  firstName: String
-  lastName: String
-  fullName: String
-  teamId: ID
-  courseId: ID
-}
-
-type AuthPayload {
-  token: String!
-  refreshToken: String!
-  userInfo: User!
-}
-
-type UserPermissions {
-  userId: ID!
-  role: Role!
-  permissions: [String!]!
-  teamId: ID
-  courseId: ID
-}
-
-
-```
-## Estructura del Proyecto
-
-```
-innosistemas-feature4/
-├── src/
-│   ├── main/
-│   │   ├── java/com/udea/innosistemas/
-│   │   │   ├── config/                 # Configuraciones de Spring
-│   │   │   │   ├── SecurityConfig.java
-│   │   │   │   ├── RedisConfig.java
-│   │   │   │   ├── GraphQLDirectivesConfig.java
-│   │   │   │   ├── GatewayConfiguration.java
-│   │   │   │   └── WebMvcConfig.java
-│   │   │   ├── controller/             # Controllers REST
-│   │   │   ├── dto/                    # Data Transfer Objects
-│   │   │   ├── entity/                 # Entidades JPA
-│   │   │   ├── exception/              # Manejo de excepciones
-│   │   │   ├── repository/             # Repositorios JPA
-│   │   │   ├── resolver/               # GraphQL Resolvers
-│   │   │   ├── security/               # Componentes de seguridad
-│   │   │   │   ├── JwtAuthenticationFilter.java
-│   │   │   │   ├── JwtTokenProvider.java
-│   │   │   │   ├── RateLimitFilter.java
-│   │   │   │   ├── SecurityHeadersFilter.java
-│   │   │   │   ├── GraphQLSecurityInterceptor.java
-│   │   │   │   └── directive/          # Directivas GraphQL
-│   │   │   ├── service/                # Servicios de negocio
-│   │   │   │   ├── AuthenticationService.java
-│   │   │   │   ├── TokenBlacklistService.java
-│   │   │   │   ├── SessionManagementService.java
-│   │   │   │   ├── RateLimitingService.java
-│   │   │   │   └── UserQueryService.java
-│   │   │   └── InnoSistemasApplication.java
-│   │   └── resources/
-│   │       ├── application.yml         # Configuración principal
-│   │       ├── db/migration/           # Scripts Flyway
-│   │       │   ├── V1__Create_users_table.sql
-│   │       │   └── V2__Add_user_team_course_fields.sql
-│   │       └── graphql/
-│   │           └── schema.graphqls     # Schema GraphQL
-│   └── test/                           # Tests unitarios e integración
-├── pom.xml                             # Configuración Maven
-└── README.md
-```
-
-## Perfiles de Ejecución
-
-### Development (dev)
 - Base de datos H2 en memoria
-- Console H2 habilitada en `/h2-console`
-- DDL auto: create-drop
-- Logging: INFO/DEBUG
+- H2 Console habilitada
 - CORS: localhost:3000, localhost:8080
+- DDL: create-drop
 
-### Test (test)
-- Base de datos H2 en memoria
-- DDL auto: create-drop
-- Logging: DEBUG
+### Test (`test`)
 
-### Production (prod)
-- Base de datos PostgreSQL
-- DDL auto: validate
-- Redis cache habilitado
-- Logging: INFO/WARN
-- CORS: configurado por variable de entorno
-
-## Configuración de Rate Limiting
-
-El sistema incluye rate limiting configurable para proteger contra abusos:
-
-- **Endpoints normales**: 100 peticiones por minuto
-- **Endpoints de autenticación**: 10 peticiones por minuto
-
-Configuración en `application.yml`:
-
-```yaml
-innosistemas:
-  ratelimit:
-    enabled: true
-    default:
-      capacity: 100
-      refill-tokens: 100
-      refill-period-minutes: 1
-    auth:
-      capacity: 10
-      refill-tokens: 10
-      refill-period-minutes: 1
-```
-
-## Seguridad
-
-### Headers de Seguridad Configurados
-- **Content-Security-Policy (CSP)**
-- **Strict-Transport-Security (HSTS)**: 1 año
-- **X-Frame-Options**: DENY
-- **X-Content-Type-Options**: nosniff
-- **X-XSS-Protection**: 1; mode=block
-```markdown
-### Directivas GraphQL Personalizadas
-
-El esquema GraphQL utiliza directivas propias para control de acceso:
-
-- `@auth` → Requiere autenticación mediante JWT.
-- `@requiresTeam` → Restringe el acceso a los miembros del equipo asociado.
-- `@requiresCourse` → Limita el acceso a usuarios pertenecientes al curso indicado.
-```
-
-### Configuración JWT
-- **Token de acceso**: 24 horas (86400 segundos)
-- **Refresh token**: 7 días (604800 segundos)
-- **Algoritmo**: HS512
-
-## Migraciones de Base de Datos
-
-### V1: Crear tabla de usuarios
-- Tabla `users` con campos básicos
-- Índices en email, role, enabled
-- Trigger para actualización automática de `updated_at`
-
-### V2: Agregar campos de equipo y curso
-- Campos: `team_id`, `course_id`, `first_name`, `last_name`
-- Índices en team_id y course_id
-
-## Testing
-
-### Ejecutar todos los tests
 ```bash
 mvn test
 ```
 
-### Ejecutar tests de integración
+- Base de datos H2 en memoria
+- Logging: DEBUG
+
+### Production (`prod`)
+
 ```bash
-mvn verify
+java -jar target/innosistemas-1.0.0.jar --spring.profiles.active=prod
 ```
 
-### Generar reporte de cobertura
+- PostgreSQL
+- Redis cache habilitado
+- DDL: validate
+- Logging: INFO/WARN
+
+## Testing
+
 ```bash
+# Todos los tests
+mvn test
+
+# Tests de integración
+mvn verify
+
+# Reporte de cobertura
 mvn clean test jacoco:report
 ```
 
 ## Troubleshooting
 
-### Error: Puerto 8080 ya en uso
+### Puerto 8080 en uso
+
 ```bash
-# Cambiar puerto en application.yml o usar variable de entorno
 export PORT=8081
 mvn spring-boot:run
 ```
 
-### Error: Conexión a base de datos rechazada
-- Verificar que PostgreSQL esté ejecutándose
-- Verificar credenciales en variables de entorno
-- Verificar que la base de datos `innosistemas` exista
+### Error de conexión a PostgreSQL
 
-### Error: JWT Secret no configurado
-- Configurar variable de entorno `JWT_SECRET`
-- En producción, usar un secret fuerte de al menos 256 bits
+- Verificar que PostgreSQL esté corriendo
+- Validar credenciales en variables de entorno
+- Confirmar que existe la base de datos `innosistemas`
 
-### Error: Redis no disponible
-- Redis es opcional, el sistema puede funcionar sin él
-- Para deshabilitarlo, usar perfil `dev` o configurar `CACHE_TYPE=simple`
+### JWT Secret no configurado
+
+```bash
+export JWT_SECRET="your-secure-256-bit-secret"
+```
+
+### Redis no disponible
+
+Redis es opcional. El sistema funciona sin Redis usando cache en memoria:
+
+```bash
+export CACHE_TYPE=simple
+```
+
+## Migraciones de Base de Datos
+
+Flyway se ejecuta automáticamente al iniciar:
+
+- `V1__Create_users_table.sql` - Tabla de usuarios
+- `V2__Add_user_team_course_fields.sql` - Campos adicionales
+
+Para ejecutar manualmente:
+
+```bash
+mvn flyway:migrate
+```
+
+## Contribución
+
+1. Fork el repositorio
+2. Crear rama feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit cambios (`git commit -am 'Agregar nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Crear Pull Request
 
 ## Licencia
 
 Universidad de Antioquia - Facultad de Ingeniería - Ingeniería de Sistemas
 
-## Contacto
+---
 
-Fábrica-Escuela de Software - Universidad de Antioquia
+**Documentación completa:** Ver carpeta `/docs` para guías detalladas de API, deployment, testing y WebSocket.

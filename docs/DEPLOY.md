@@ -1,4 +1,4 @@
-# 🚀 Despliegue Automático - InnoSistemas Backend
+# Despliegue Automático - InnoSistemas Backend
 
 ## Configuración de GitHub Secrets
 
@@ -16,7 +16,7 @@ Para que el workflow funcione, configura estos secrets en GitHub:
 
 ---
 
-## 🔧 Configuración en Render
+## Configuración en Render
 
 ### 1. Crear Web Service en Render
 
@@ -65,7 +65,7 @@ RENDER_API_KEY=rnd_XXXXXXXXXXXXXXXXXXXXXXXX
 
 ---
 
-## 🔄 Workflow Pipeline
+## Workflow Pipeline
 
 El workflow automático hace:
 
@@ -77,13 +77,13 @@ El workflow automático hace:
 
 ### Trigger del Workflow:
 
-- ✅ Push a `main` - Deploy completo
-- ✅ Pull Request - Solo tests y build
-- ✅ Manual - Botón "Run workflow"
+- Push a `main` - Deploy completo
+- Pull Request - Solo tests y build
+- Manual - Botón "Run workflow"
 
 ---
 
-## 📊 Base de Datos
+## Base de Datos
 
 ### Opción 1: Render PostgreSQL
 ```bash
@@ -98,7 +98,7 @@ DATABASE_USERNAME=postgres
 
 ---
 
-## ✅ Verificar Despliegue
+## Verificar Despliegue
 
 ```bash
 curl https://tu-app.onrender.com/api/v1/actuator/health
@@ -111,7 +111,7 @@ Respuesta esperada:
 
 ---
 
-## 🎯 URLs Importantes
+## URLs Importantes
 
 - **API GraphQL**: `https://tu-app.onrender.com/api/v1/graphql`
 - **GraphiQL**: `https://tu-app.onrender.com/api/v1/graphiql`
@@ -119,5 +119,5 @@ Respuesta esperada:
 
 ---
 
-**¡Listo! Cada push a `main` desplegará automáticamente a Render 🚀**
+**Listo - Cada push a `main` desplegará automáticamente a Render**
 
