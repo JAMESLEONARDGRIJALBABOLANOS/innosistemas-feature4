@@ -471,3 +471,125 @@ type DeleteTeamResponse {
     """
     message: String!
 }
+
+# ==========================================
+# SUSCRIPCIONES (SUBSCRIPTIONS)
+# ==========================================
+
+type Subscription {
+    """
+    Suscripción a notificaciones en tiempo real del usuario autenticado
+    Se emite cuando se crea una nueva notificación para el usuario
+    Requiere: Autenticación JWT válida
+    """
+    onNotificationReceived: NotificationDTO! @auth
+
+    """
+    Suscripción a eventos de equipo en tiempo real
+    Se emite cuando ocurre un evento en el equipo del usuario
+    Requiere: Autenticación JWT válida
+    """
+    onTeamEvent(teamId: ID): TeamEventPayload! @auth
+
+    """
+    Suscripción a contador de notificaciones no leídas
+    Se emite cuando cambia el número de notificaciones no leídas
+    Requiere: Autenticación JWT válida
+    """
+    onUnreadCountChanged: UnreadCountPayload! @auth
+}
+
+# ==========================================
+# TIPOS PARA NOTIFICACIONES
+# ==========================================
+
+type NotificationDTO {
+    """
+    ID de la notificación
+    """
+    id: ID!
+
+    """
+    Tipo de notificación (INVITATION, DEADLINE_REMINDER, etc.)
+    """
+    tipo: String!
+
+    """
+    Mensaje de la notificación
+    """
+    mensaje: String!
+
+    """
+    ID del usuario destinatario
+    """
+    userId: ID!
+
+    """
+    ID del equipo relacionado (opcional)
+    """
+    teamId: ID
+
+    """
+    Indica si la notificación ha sido leída
+    """
+    leido: Boolean!
+
+    """
+    Fecha de creación (ISO 8601)
+    """
+    createdAt: String!
+
+    """
+    Metadatos adicionales en formato JSON
+    """
+    metadata: String
+}
+
+type TeamEventPayload {
+    """
+    ID del equipo
+    """
+    teamId: ID!
+
+    """
+    Tipo de evento (MEMBER_JOINED, MEMBER_LEFT, etc.)
+    """
+    tipoEvento: String!
+
+    """
+    ID del usuario que originó el evento
+    """
+    usuarioOrigenId: ID
+
+    """
+    Detalles del evento
+    """
+    detalles: String!
+
+    """
+    Timestamp del evento (ISO 8601)
+    """
+    timestamp: String!
+
+    """
+    Metadatos adicionales
+    """
+    metadata: String
+}
+
+type UnreadCountPayload {
+    """
+    ID del usuario
+    """
+    userId: ID!
+
+    """
+    Cantidad de notificaciones no leídas
+    """
+    count: Int!
+
+    """
+    Timestamp de la actualización (ISO 8601)
+    """
+    timestamp: String!
+}
