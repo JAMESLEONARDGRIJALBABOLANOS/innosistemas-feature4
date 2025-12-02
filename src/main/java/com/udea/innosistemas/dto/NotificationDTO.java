@@ -150,4 +150,13 @@ public class NotificationDTO {
     public void setExpiraEn(LocalDateTime expiraEn) {
         this.expiraEn = expiraEn;
     }
+
+    // Métodos adicionales para compatibilidad con GraphQL schema
+    public boolean getLeido() {
+        return leida;
+    }
+
+    public String getCreatedAt() {
+        return fechaCreacion != null ? fechaCreacion.toString() : null;
+    }
 }

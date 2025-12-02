@@ -110,6 +110,34 @@ type Mutation {
     Requiere: Rol PROFESSOR o ADMIN
     """
     deleteTeam(id: ID!): DeleteTeamResponse! @auth
+
+    # ==========================================
+    # GESTIÓN DE NOTIFICACIONES
+    # ==========================================
+
+    """
+    Crea una nueva notificación
+    Requiere: Rol PROFESSOR, ADMIN o TA
+    """
+    createNotification(input: CreateNotificationInput!): NotificationDTO! @auth
+
+    """
+    Marca una notificación como leída
+    Requiere: Autenticación
+    """
+    markNotificationAsRead(id: ID!): NotificationDTO! @auth
+
+    """
+    Marca todas las notificaciones del usuario como leídas
+    Requiere: Autenticación
+    """
+    markAllNotificationsAsRead: MarkAllNotificationsResponse! @auth
+
+    """
+    Elimina una notificación
+    Requiere: Autenticación
+    """
+    deleteNotification(id: ID!): DeleteNotificationResponse! @auth
 }
 
 input RegisterUserInput {
@@ -592,4 +620,84 @@ type UnreadCountPayload {
     Timestamp de la actualización (ISO 8601)
     """
     timestamp: String!
+}
+
+# ==========================================
+# INPUTS Y RESPONSES PARA NOTIFICACIONES
+# ==========================================
+
+input CreateNotificationInput {
+    """
+    ID del usuario destinatario
+    """
+    userId: ID!
+
+    """
+    Tipo de notificación
+    """
+    tipo: String!
+
+    """
+    Mensaje de la notificación
+    """
+    mensaje: String!
+
+    """
+    ID del equipo relacionado (opcional)
+    """
+    teamId: ID
+
+    """
+    ID del curso relacionado (opcional)
+    """
+    cursoId: ID
+
+    """
+    Metadatos adicionales en formato JSON (opcional)
+    """
+    metadata: String
+
+    """
+    Enlace relacionado (opcional)
+    """
+    enlace: String
+
+    """
+    Fecha de expiración (opcional)
+    """
+    expiraEn: String
+
+    """
+    Prioridad de la notificación (opcional)
+    """
+    prioridad: String
+}
+
+type MarkAllNotificationsResponse {
+    """
+    Indica si la operación fue exitosa
+    """
+    success: Boolean!
+
+    """
+    Cantidad de notificaciones marcadas
+    """
+    count: Int!
+
+    """
+    Mensaje descriptivo
+    """
+    message: String!
+}
+
+type DeleteNotificationResponse {
+    """
+    Indica si la eliminación fue exitosa
+    """
+    success: Boolean!
+
+    """
+    Mensaje descriptivo
+    """
+    message: String!
 }

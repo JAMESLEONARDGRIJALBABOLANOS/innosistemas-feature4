@@ -116,6 +116,9 @@ spring:
       enabled: true
       path: /graphiql
     path: /graphql
+    websocket:
+      path: /graphql
+      connection-init-timeout: 60000
     schema:
       printer:
         enabled: true
