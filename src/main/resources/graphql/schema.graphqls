@@ -32,6 +32,12 @@ type Query {
     Requiere: Autenticación JWT válida
     """
     getTeamMembers(teamId: ID!): [TeamMember!]! @auth @requiresTeam
+    """
+    Obtiene todas las notificaciones del usuario actualmente autenticado
+    Incluye paginación opcional (first + offset)
+    Requiere: Autenticación JWT válida
+    """
+    getMyNotifications(first: Int, offset: Int): [NotificationDTO!]! @auth
 }
 
 type Mutation {
