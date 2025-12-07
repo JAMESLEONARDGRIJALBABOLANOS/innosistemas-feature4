@@ -1,0 +1,124 @@
+# ============================================
+# Configuración específica para Docker Compose
+# ============================================
+
+spring:
+  config:
+    activate:
+      on-profile: docker
+  
+  application:
+    name: innosistemas-backend-docker
+  
+  # Configuración de base de datos para Docker Compose
+  datasource:
+    url: jdbc:postgresql://postgres:5432/innosistemas
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      connection-timeout: 30000
+  
+  # Configuración JPA
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: America/Bogota
+  
+  # Redis para Docker
+  redis:
+    host: redis
+    port: 6379
+    timeout: 2000ms
+  
+  # Configuración de correo para desarrollo
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  
+  # GraphQL en Docker
+  graphql:
+    graphiql:
+      enabled: true
+      path: /graphiql
+    path: /graphql
+    websocket:
+      path: /graphql
+  
+  # CORS para desarrollo en Docker
+  cors:
+    allowed-origins: http://localhost:3000,http://localhost:8080,http://localhost:8081
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: "*"
+    allow-credentials: true
+
+# Configuración de la aplicación para Docker
+innosistemas:
+  # JWT para desarrollo (NO usar en producción)
+  auth:
+    jwt:
+      secret: development-secret-key-change-in-production-please
+      expiration: 86400
+      refresh-expiration: 604800
+  
+  # Configuración de archivos
+  files:
+    upload-dir: /app/uploads
+  
+  # Notificaciones
+  notifications:
+    email:
+      enabled: false  # Desactivar en Docker a menos que configures SMTP
+      from: noreply@innosistemas.udea.edu.co
+    in-app:
+      enabled: true
+  
+  # CORS
+  cors:
+    allowed-origins: http://localhost:3000,http://localhost:8080,http://localhost:8081,http://localhost:8080/api/v1
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: Content-Type,Authorization,X-Requested-With,Accept,Origin
+    allow-credentials: true
+
+# Configuración de logging para Docker
+logging:
+  level:
+    com.udea.innosistemas: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type: TRACE
+  file:
+    name: /app/logs/innosistemas.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# Actuator para Docker
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true

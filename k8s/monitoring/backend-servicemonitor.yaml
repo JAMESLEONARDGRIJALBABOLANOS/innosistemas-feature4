@@ -1,0 +1,21 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: backend-servicemonitor
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  namespaceSelector:
+    matchNames:
+      - innosistemas
+  endpoints:
+    - port: http
+      path: /api/v1/actuator/prometheus
+      interval: 30s
+      honorLabels: true
+      scheme: http
+      targetPort: 8080

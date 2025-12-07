@@ -398,3 +398,17 @@ innosistemas:
       secret: test-secret-key-for-testing-only-must-be-at-least-256-bits-long-for-hs384
       expiration: 3600
       refresh-expiration: 86400
+
+---
+# Docker Profile - Para desarrollo con Docker Compose
+spring:
+  config:
+    activate:
+      on-profile: docker
+  # La configuración específica está en application-docker.yml
+  # Se cargará automáticamente por tener el mismo nombre
+
+# ============================================
+# NOTA: La configuración completa para docker está en:
+# src/main/resources/application-docker.yml
+# ============================================
